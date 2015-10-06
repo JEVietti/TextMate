@@ -1,0 +1,36 @@
+Use Case: Textmate
+A. Characteristic Information
+•	Goal in context: Client sent in request, the app respond to that request and sent back the necessary information
+•	Scope: App
+•	Level: Summary
+•	Preconditions: We have the contact list and message information.
+•	Success end condition: Client get the necessary information based on request requirements.
+•	Failed end condition: We don’t get the information, no privacy breached.
+•	Primary actor: Client and their contact lists
+•	Trigger: Request occur.
+B. Main Success Scenario
+1.	Client sent in request.
+2.	App get the client’s name, targeted contact, and messages between them.
+3.	App give a brief information regarding the contact.
+4.	Client choose the information it need.
+5.	App create the information.
+6.	App send information to Client
+C. Extensions
+????????????????????
+D. Variations
+????????????????????
+E. Related Information
+•	Priority: ???
+•	Performance target: no more than 5 seconds once the request is sent
+•	Frequency: Not easily determined
+•	Superordinate use case: ??????
+•	Subordinate use cases: ???????
+•	Channel to primary actor: Phone with contacts
+•	Secondary actors: ????
+F. Schedule
+•	Due Date: December Something
+G. Open Issues
+•	???
+
+
+
