@@ -1,2 +1,2 @@
 # TextMate
-TextMate is an Android app being developed under CSci_150 throughout the Fall 2015 semester.
+TextMate is an Android app being developed for CSci_150.
