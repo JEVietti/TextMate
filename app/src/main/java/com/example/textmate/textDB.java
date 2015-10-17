@@ -16,6 +16,7 @@ public class textDB extends SQLiteOpenHelper {
     public static final String Column3= "CharCount";
     public static final String Column4 = "MessageCount";
     public static final String Column5 = "TimeDiff";
+    //public static final String Column6 = "NumUpdates";
     public textDB(Context context) {
         super(context, DataBase_Name, null, 1);
     }
@@ -32,7 +33,7 @@ public class textDB extends SQLiteOpenHelper {
          onCreate(db);
     }
 
-    public void insertData(int ID,String name,int charCount, int messageCount, double diffTime){
+    public boolean insertData(String ID,String name,int charCount, int messageCount, double diffTime){
         ContentValues val = new ContentValues();
 
         val.put(Column1, ID);
@@ -42,7 +43,21 @@ public class textDB extends SQLiteOpenHelper {
         val.put(Column5,diffTime);
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.insert(Table_Name, null, val);
+        long check = db.insert(Table_Name, null, val);
         db.close();
+        return check != -1;
     }
+
+    public boolean updateData(String ID,String name,int charCount, int messageCount, double diffTime) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues val = new ContentValues();
+        val.put(Column1, ID);
+        val.put(Column2, name);
+        val.put(Column3,charCount);
+        val.put(Column4,messageCount);
+        val.put(Column5,diffTime);
+        db.update(Table_Name, val, "ID = ?", new String[]{ID});
+        return true;
+    }
+
 }
