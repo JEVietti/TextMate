@@ -8,12 +8,14 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends ActionBarActivity {
-    textDB myDB;
+    textDB myTextDB;
+    textScoreDB myScoreDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myDB = new textDB(this);
+        myTextDB = new textDB(this);
+        myScoreDB = new textScoreDB(this);
     }
 
     @Override
