@@ -40,6 +40,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SENT_DATE        = "sent_date";
     public static final String BODY             = "body";
 
+
+    //TextMate Data Columns
+    public static final String Data_Table_Name = "TextMateData";
+    public static final String Data_Column1 = "ContactID";
+    public static final String Data_Column2 = "ContactName";
+    public static final String Data_Column3= "CharCount";
+    public static final String Data_Column4 = "MessageCount";
+    public static final String Data_Column5 = "DiffSentTime";
+    public static final String Data_Column6 = "DiffReturnTime";
+    public static final int DataBase_Version = 1;
+
+    //TextMate Scores Columns
+    public static final String Scores_Table_Name = "TextMateScoresData";
+    public static final String Scores_Column1 = "ContactID";
+    public static final String Scores_Column2 = "ContactName";
+    public static final String Scores_Column3 = "Scores";
+
+
+
     public static final String CREATE_THREADS_TABLE = "CREATE TABLE " + SMS_THREAD_TABLE + "("
             + ID_THREAD + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + THREAD_DATE + " INTEGER DEFAULT 0, "
@@ -56,9 +75,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + SENT_DATE + " INTEGER, "
             + BODY + "TEXT" + ")";
 
+    public static final String Create_Data_Table="CREATE TABLE "+Data_Table_Name+"("
+            +Data_Column1+ "INTEGER PRIMARY KEY AUTOINCREMENT, "
+            +Data_Column2+ "TEXT "
+            +Data_Column3+ "INTEGER "
+            +Data_Column4+ "INTEGER"
+            +Data_Column5+ "DOUBLE"
+            +Data_Column6+ "DOUBLE" + ")";
+
+    public static final String Create_Score_Table = "CREATE TABLE "+Scores_Table_Name+"("
+            +Scores_Column1+ "INTEGER PRIMARY KEY AUTOINCREMENT,"
+            +Scores_Column2+ "TEXT "
+            +Scores_Column3+" DOUBLE" + ")";
+
     // Class Constructor
     public DatabaseHelper(Context context) {
-        super(context, Database_Name, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     // onOpen method to enable the foreign key constraint
@@ -76,52 +108,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_THREADS_TABLE);
         db.execSQL(CREATE_SMS_TABLE);
+        db.execSQL(Create_Data_Table);
+        db.execSQL(Create_Score_Table);
+
     }
 
     // onUpgrade Method is updating the Database Version when Creating a new Version of an existing DB
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + Table_Name);
+        db.execSQL("DROP TABLE IF EXISTS " + SMS_THREAD_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + SMS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + Scores_Table_Name);
+        db.execSQL("DROP TABLE IF EXISTS " + Data_Table_Name);
+        //Create New Tables
         onCreate(db);
     }
+
+    //////////////////////////////TextMateData Table/////////////////////////////////////////////
 
     //Inserts the Actual Data into the DB, boolean instead of void to ensure that data is inserted correctly
     //and the db.insert method returns -1 if it is not so we check to make sure it is not to ensure that
     //the data is inserted correctly
-    public boolean insertData(String ID, String name, int charCount,
-                              int messageCount, double diffSentTime, double diffReturnTime) {
+    public boolean Data_insertData(String ID, String name, int charCount, int messageCount, double diffSentTime, double diffReturnTime) {
         ContentValues val = new ContentValues();
 
-        val.put(Column1, ID);               //The ID of the Contacts
-        val.put(Column2, name);             //The Name of the Contacts
-        val.put(Column3, charCount);        //Initial Character Count per Day
-        val.put(Column4, messageCount);     //Initial Message Count per Day
-        val.put(Column5, diffSentTime);     //Initial Average time between Sending for each Contact for the day
-        val.put(Column6, diffReturnTime);   //Initial Average time between receiving a message for each Contact for the day
+        val.put(Data_Column1, ID);               //The ID of the Contacts
+        val.put(Data_Column2, name);             //The Name of the Contacts
+        val.put(Data_Column3, charCount);        //Initial Character Count per Day
+        val.put(Data_Column4, messageCount);     //Initial Message Count per Day
+        val.put(Data_Column5, diffSentTime);     //Initial Average time between Sending for each Contact for the day
+        val.put(Data_Column6, diffReturnTime);   //Initial Average time between receiving a message for each Contact for the day
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        long check = db.insert(Table_Name, null, val);
+        long check = db.insert(Data_Table_Name, null, val);
         db.close();
         return check != -1;
     }
 
     //The Update Data will be the values passed to it
-    public boolean updateData(String ID, String name, int charCount,
-                              int messageCount, double diffSentTime, double diffReturnTime) {
+    public boolean Data_updateData(String ID, String name, int charCount,
+                                   int messageCount, double diffSentTime, double diffReturnTime) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues val = new ContentValues();
 
-        val.put(Column1, ID);               //The ID of the Contacts
-        val.put(Column2, name);             //The Name of the Contacts
-        val.put(Column3, charCount);        //The Average Character Count Per Message per Day
-        val.put(Column4, messageCount);     //The Average Message Count for the the Day
-        val.put(Column5, diffSentTime);     //Average Amount of time between Sent Messages from Received
-        val.put(Column6, diffReturnTime);
+        val.put(Data_Column1, ID);               //The ID of the Contacts
+        val.put(Data_Column2, name);             //The Name of the Contacts
+        val.put(Data_Column3, charCount);        //The Average Character Count Per Message per Day
+        val.put(Data_Column4, messageCount);     //The Average Message Count for the the Day
+        val.put(Data_Column5, diffSentTime);     //Average Amount of time between Sent Messages from Received
+        val.put(Data_Column6, diffReturnTime);
 
 
-        db.update(Table_Name, val, "ID = ?", new String[]{ID}); //Update based on the ID
+        db.update(Data_Table_Name, val, "ID = ?", new String[]{ID}); //Update based on the ID
         return true;
     }
+
+    
+
+        ///////////////////////// TextMate Algorithm Scores Table ///////////////////////////////////
+
+
 
 }
