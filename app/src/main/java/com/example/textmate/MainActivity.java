@@ -1,6 +1,10 @@
 
 package com.example.textmate;
 
+import com.example.textmate.sqlitehelper.DatabaseHelper;
+import com.example.textmate.sqlite.models.textMateData;
+import com.example.textmate.sqlite.models.textMateScores;
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,14 +12,16 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends ActionBarActivity {
-    textDB myTextDB;
-    textScoreDB myScoreDB;
+    DatabaseHelper textMateDB;
+    //textDB myTextDB;
+    //textScoreDB myScoreDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myTextDB = new textDB(this);
-        myScoreDB = new textScoreDB(this);
+      textMateDB = new DatabaseHelper(this);
+      //myTextDB = new textDB(this);
+      //myScoreDB = new textScoreDB(this);
     }
 
     @Override

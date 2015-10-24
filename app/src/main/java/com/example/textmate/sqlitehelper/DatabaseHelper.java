@@ -1,7 +1,9 @@
 // SQLiteOpenHelper has predefined methods for creating the Database
 // which we need to store values from the SMSDataBase we need for the application/algorithm
-package com.example.textmate;
+package com.example.textmate.sqlitehelper;
 
+import com.example.textmate.sqlite.models.textMateData;
+import com.example.textmate.sqlite.models.textMateScores;
 import java.lang.String;
 import android.content.ContentValues;
 import android.content.Context;
@@ -164,7 +166,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    
+
 
         ///////////////////////// TextMate Algorithm Scores Table ///////////////////////////////////
 
