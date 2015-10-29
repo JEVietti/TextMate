@@ -4,11 +4,28 @@ package com.example.textmate;
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 import com.example.textmate.sqlite.models.textMateData;
 import com.example.textmate.sqlite.models.textMateScores;
-
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -19,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-      textMateDB = new DatabaseHelper(this);
+        textMateDB = new DatabaseHelper(this);
       //myTextDB = new textDB(this);
       //myScoreDB = new textScoreDB(this);
     }
@@ -45,5 +62,8 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-}
 
+
+    
+
+}
