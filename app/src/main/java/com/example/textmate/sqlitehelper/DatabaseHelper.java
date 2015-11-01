@@ -192,7 +192,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             tmData.setMsgCount(c.getInt(c.getColumnIndex(Data_Column4)));
             //....
         }
-
         return tmData;
     }
     //Fetch all rows data
@@ -200,7 +199,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<textMateData> allTD = new ArrayList<textMateData>();
         String selectQuery = "SELECT * FROM" + Data_Table_Name;
 
-        Log.e(LOG,selectQuery);
+        Log.e(LOG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery,null);
@@ -226,7 +225,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues val = new ContentValues();
         val.put(Data_Column3, tmData.fetchCharCount());
-        val.put(Data_Column4,tmData.fetchMsgCount());
+        val.put(Data_Column4, tmData.fetchMsgCount());
         //...
 
         return db.update(Data_Table_Name,val,Data_Column1 + "= ?",
@@ -238,12 +237,79 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteTMData(long dataID){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(Data_Table_Name, Data_Column1 + "= ?",
-                new String[] {String.valueOf(dataID)});
+                new String[]{String.valueOf(dataID)});
+    db.close();
     }
 
         ///////////////////////// TextMate Algorithm Scores Table ///////////////////////////////////
 
+    //Fetch a single row
+    public textMateScores fetchScore(long dataID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT * FROM" + Data_Table_Name + "WHERE"
+                +Scores_Column1+ "=" + dataID;
+        Log.e(LOG, selectQuery);
+        Cursor c = db.rawQuery(selectQuery, null);
 
+        //Use the model Functions for the Table Class
+        textMateScores tmScores = new textMateScores();
+        if(c != null && c.moveToFirst()) {
+            tmScores.setID(c.getInt(c.getColumnIndex(Scores_Column1)));
+            tmScores.setName(c.getString(c.getColumnIndex(Scores_Column2)));
+            tmScores.setScore(c.getDouble(c.getColumnIndex(Scores_Column3)));
+            tmScores.setNumUpdate(c.getInt(c.getColumnIndex(Scores_Column4)));
+            //....
+        }
+        db.close();
+        return tmScores;
+    }
+    //Fetch all rows data
+    public List<textMateScores> fetchAllScores(){
+        List<textMateScores> allTS = new ArrayList<textMateScores>();
+        String selectQuery = "SELECT * FROM" + Scores_Table_Name;
+
+        Log.e(LOG,selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery,null);
+
+        if(c!=null && c.moveToFirst()) {
+            do {
+                textMateScores tmScore = new textMateScores();
+                tmScore.setID(c.getInt(c.getColumnIndex(Scores_Column1)));
+                tmScore.setName(c.getString(c.getColumnIndex(Scores_Column2)));
+                tmScore.setScore(c.getDouble(c.getColumnIndex(Scores_Column3)));
+                tmScore.setNumUpdate(c.getInt(c.getColumnIndex(Scores_Column4)));
+                //....
+                allTS.add(tmScore);
+            }
+            while (c.moveToNext());
+        }
+        db.close();
+        return allTS;
+    }
+
+    //Updating the TextMate ScoresTable row
+    public int updateScoreTable(textMateScores tmScores){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues val = new ContentValues();
+        val.put(Scores_Column3, tmScores.fetchScore());
+        val.put(Scores_Column4,tmScores.fetchNumUpdate());
+        //...
+
+        return db.update(Scores_Table_Name,val,Scores_Column1 + "= ?",
+                new String[] {String.valueOf(tmScores.fetchID())});
+    }
+
+
+    //Deleting TextMate DataTable
+    public void deleteTMScore(long scoreID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(Scores_Table_Name, Scores_Column1 + "= ?",
+                new String[] {String.valueOf(scoreID)});
+        db.close();
+    }
 
 
 

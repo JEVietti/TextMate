@@ -14,13 +14,14 @@ public class textMateData {
     //Constructors
     public textMateData(){} //Empty Constructor
     //Constructor to initialize the data into the object of the class
-    public textMateData(int id, String name, int charCount,int msgCount,double diffTimeSent,double diffTimeReceive){
+    public textMateData(int id, String name, int charCount,int msgCount,double diffTimeSent,double diffTimeReceive, int numUpdate){
         this.id = id;
         this.name = name;
         this.charCount = charCount;
         this.msgCount = msgCount;
         this.diffTimeSent = diffTimeSent;
         this.diffTimeReceive = diffTimeReceive;
+        this.numUpdate = numUpdate;
     }
 
     //Class Methods for setting the Values of the Columns for the textMateData Table
