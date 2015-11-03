@@ -5,14 +5,21 @@ package com.example.textmate.sqlitehelper;
 import com.example.textmate.sqlite.models.textMateData;
 import com.example.textmate.sqlite.models.textMateScores;
 import java.lang.String;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 
 // Create a helper object to create, open, and/or manage a database.
 public class DatabaseHelper extends SQLiteOpenHelper {
+     //Logging Variable for Queries
+    private static final String LOG = DatabaseHelper.class.getName();
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME    = "TextMate";
@@ -51,6 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String Data_Column4 = "MessageCount";
     public static final String Data_Column5 = "DiffSentTime";
     public static final String Data_Column6 = "DiffReturnTime";
+    public static final String Data_Column7 = "NumberOfUpdates";
     public static final int DataBase_Version = 1;
 
     //TextMate Scores Columns
@@ -58,7 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String Scores_Column1 = "ContactID";
     public static final String Scores_Column2 = "ContactName";
     public static final String Scores_Column3 = "Scores";
-
+    public static final String Scores_Column4 = "NumberOfUpdates";
 
 
     public static final String CREATE_THREADS_TABLE = "CREATE TABLE " + SMS_THREAD_TABLE + "("
@@ -80,15 +88,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String Create_Data_Table="CREATE TABLE "+Data_Table_Name+"("
             +Data_Column1+ "INTEGER PRIMARY KEY AUTOINCREMENT, "
             +Data_Column2+ "TEXT "
-            +Data_Column3+ "INTEGER "
+            +Data_Column3+ "INTEGER"
             +Data_Column4+ "INTEGER"
             +Data_Column5+ "DOUBLE"
-            +Data_Column6+ "DOUBLE" + ")";
+            +Data_Column6+ "DOUBLE"
+            +Data_Column7+ "INTEGER" + ")";
 
     public static final String Create_Score_Table = "CREATE TABLE "+Scores_Table_Name+"("
             +Scores_Column1+ "INTEGER PRIMARY KEY AUTOINCREMENT,"
             +Scores_Column2+ "TEXT "
-            +Scores_Column3+" DOUBLE" + ")";
+            +Scores_Column3+" DOUBLE"
+            +Scores_Column4+ "INTEGER" + ")";
 
     // Class Constructor
     public DatabaseHelper(Context context) {
@@ -165,10 +175,141 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(Data_Table_Name, val, "ID = ?", new String[]{ID}); //Update based on the ID
         return true;
     }
+    //Fetch a single row
+    public textMateData fetchData(long dataID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT * FROM" + Data_Table_Name + "WHERE"
+                +Data_Column1+ "=" + dataID;
+        Log.e(LOG, selectQuery);
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        //Use the model Functions for the Table Class
+        textMateData tmData = new textMateData();
+        if(c != null && c.moveToFirst()) {
+            tmData.setId(c.getInt(c.getColumnIndex(Data_Column1)));
+            tmData.setName(c.getString(c.getColumnIndex(Data_Column2)));
+            tmData.setCharCount(c.getInt(c.getColumnIndex(Data_Column3)));
+            tmData.setMsgCount(c.getInt(c.getColumnIndex(Data_Column4)));
+            //....
+        }
+        return tmData;
+    }
+    //Fetch all rows data
+    public List<textMateData> fetchAllData(){
+        List<textMateData> allTD = new ArrayList<textMateData>();
+        String selectQuery = "SELECT * FROM" + Data_Table_Name;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery,null);
+
+        if(c!=null && c.moveToFirst()) {
+            do {
+                textMateData tmData = new textMateData();
+                tmData.setId(c.getInt(c.getColumnIndex(Data_Column1)));
+                tmData.setName(c.getString(c.getColumnIndex(Data_Column2)));
+                tmData.setCharCount(c.getInt(c.getColumnIndex(Data_Column3)));
+                tmData.setMsgCount(c.getInt(c.getColumnIndex(Data_Column4)));
+                //....
+                allTD.add(tmData);
+            }
+            while (c.moveToNext());
+        }
+        return allTD;
+    }
+
+    //Updating the TextMate DataTable row
+    public int updateDataTable(textMateData tmData){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues val = new ContentValues();
+        val.put(Data_Column3, tmData.fetchCharCount());
+        val.put(Data_Column4, tmData.fetchMsgCount());
+        //...
+
+        return db.update(Data_Table_Name,val,Data_Column1 + "= ?",
+                new String[] {String.valueOf(tmData.fetchID())});
+    }
 
 
+    //Deleting TextMate DataTable
+    public void deleteTMData(long dataID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(Data_Table_Name, Data_Column1 + "= ?",
+                new String[]{String.valueOf(dataID)});
+    db.close();
+    }
 
         ///////////////////////// TextMate Algorithm Scores Table ///////////////////////////////////
+
+    //Fetch a single row
+    public textMateScores fetchScore(long dataID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT * FROM" + Data_Table_Name + "WHERE"
+                +Scores_Column1+ "=" + dataID;
+        Log.e(LOG, selectQuery);
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        //Use the model Functions for the Table Class
+        textMateScores tmScores = new textMateScores();
+        if(c != null && c.moveToFirst()) {
+            tmScores.setID(c.getInt(c.getColumnIndex(Scores_Column1)));
+            tmScores.setName(c.getString(c.getColumnIndex(Scores_Column2)));
+            tmScores.setScore(c.getDouble(c.getColumnIndex(Scores_Column3)));
+            tmScores.setNumUpdate(c.getInt(c.getColumnIndex(Scores_Column4)));
+            //....
+        }
+        db.close();
+        return tmScores;
+    }
+    //Fetch all rows data
+    public List<textMateScores> fetchAllScores(){
+        List<textMateScores> allTS = new ArrayList<textMateScores>();
+        String selectQuery = "SELECT * FROM" + Scores_Table_Name;
+
+        Log.e(LOG,selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery,null);
+
+        if(c!=null && c.moveToFirst()) {
+            do {
+                textMateScores tmScore = new textMateScores();
+                tmScore.setID(c.getInt(c.getColumnIndex(Scores_Column1)));
+                tmScore.setName(c.getString(c.getColumnIndex(Scores_Column2)));
+                tmScore.setScore(c.getDouble(c.getColumnIndex(Scores_Column3)));
+                tmScore.setNumUpdate(c.getInt(c.getColumnIndex(Scores_Column4)));
+                //....
+                allTS.add(tmScore);
+            }
+            while (c.moveToNext());
+        }
+        db.close();
+        return allTS;
+    }
+
+    //Updating the TextMate ScoresTable row
+    public int updateScoreTable(textMateScores tmScores){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues val = new ContentValues();
+        val.put(Scores_Column3, tmScores.fetchScore());
+        val.put(Scores_Column4,tmScores.fetchNumUpdate());
+        //...
+
+        return db.update(Scores_Table_Name,val,Scores_Column1 + "= ?",
+                new String[] {String.valueOf(tmScores.fetchID())});
+    }
+
+
+    //Deleting TextMate DataTable
+    public void deleteTMScore(long scoreID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(Scores_Table_Name, Scores_Column1 + "= ?",
+                new String[] {String.valueOf(scoreID)});
+        db.close();
+    }
 
 
 

@@ -20,6 +20,8 @@
 // will have a weight of 2x -> x being number of texts between a day
 // Weight of #of characters =>
 public class alg{
+    public double newDiffTimeSent,NewDiffTimeRec;
+
     //Constructor I'm thinking we need need this as a way to grab data
     //from the data base to store it into an object for each date we want
     //in order to compute this is just a thought of what it would be like
@@ -37,7 +39,7 @@ public alg(int numTxt,int txtNumChar,double txtTimeSent,double txtTimeReceived){
     //and use it as a way to interpret the progress of the relationship
     String relStatus;  //Prints to the user how the relationship is going with a contact
 //Function Definitions and How the weights will be computed
-
+/*  May not need this part because of Built in class functions for models
     //Compute the Average values for the Columns in the Database other than Time Values which are doubles
     public void computeAverageValues(alg obj){
         int res = 0;
@@ -50,18 +52,19 @@ public alg(int numTxt,int txtNumChar,double txtTimeSent,double txtTimeReceived){
 
     }
 
-
+*/
 /* For the function valNumTxt -> the value assigned based on the # of texts
   * between a certain time frame i.e. 24 hour cycle
   * The weight of which will be (#texts / time) */
     //Value for the number of texts in a day
-    //double valNumTxt(int x,double t){;}
+     public double valNumTxt(int x,double t){return x/t;}
+
     /*For the function valSizeTxt -> the value assigned based on
      * the Average size of the texts
      * based on the amount of characters over a certain time period i.e. 24 hour
-     * The weight = ((#char total for all texts during day/ # of texts that day)/ time)*/
+     * The weight = ((#word total for all texts during day/ # of texts that day)/ time)*/
     //Value for the average size of texts in a day
-    //double valSizeTxt(int x,int y,double t){;}
+    double valSizeTxt(int x,int y,double t){ return ((x/y)/t);}
 
     /* For the Function valTimeTxt -> the value assigned based on
     * the Average time between messages throughout the day,
@@ -70,14 +73,23 @@ public alg(int numTxt,int txtNumChar,double txtTimeSent,double txtTimeReceived){
     * from the contact all will be combined into a single value
     * */
     //Value for the time for both received and sent messages
-    //double valTimeTxt(double t1,double t2,double t3,double t4){;}
+    double valTimeTxt(double tS,double tR,double tSR){
+        double ans;
+        ans = (tS+2*tR); //Temp = Avg timeSent + 2*timeRec
+        ans=ans-tSR;       //Temp = Temp - Avg TimeBetweenSentandRec
+        return ans/24; //Temp/hours in a day
+    }
 
     /* The function weighValues is used to combine the values of the previously
     * defined functions: valNumTxt, valTimeTxt, and valSizeTxt
     *  => into a single value score which will be stored into a variable valToday
     *  */
     //Combined value for the functions above
-    //double weighValues(double v1,double v2,double v3){}
+    double weighValues(double v1,double v2,double v3){
+
+
+        return 0.0;
+    }
 
     /* The Function printStatusRel is used as a comparison function of the
      * values from the weighValues of yesterday and today to an ouput string
@@ -90,7 +102,6 @@ public alg(int numTxt,int txtNumChar,double txtTimeSent,double txtTimeReceived){
         String ans, ans1, ans2;
         double BaseScore = 2.0; //The Base Score to compare users Scores with will update
                                 //score based on testing later in development
-
         if(v1 < BaseScore)
             ans1="In Bad Standing";
         else

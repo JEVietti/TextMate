@@ -30,7 +30,7 @@ public class textMateScores {
     public int fetchNumUpdate(){return this.numUpdate;}
     public void setNumUpdate(int newNumUpdate){this.numUpdate=newNumUpdate;}
 
-    public double fetchScore(int posScore){return this.score[(this.numUpdate % numScores)];}
+    public double fetchScore(){return this.score[(this.numUpdate % this.numScores)];}
     public void setScore(double newScore){
         this.score[this.numUpdate%numScores] = newScore;
         this.setNumUpdate(this.numUpdate+1);
