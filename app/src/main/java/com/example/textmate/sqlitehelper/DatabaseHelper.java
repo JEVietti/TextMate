@@ -2,12 +2,10 @@
 // which we need to store values from the SMSDataBase we need for the application/algorithm
 package com.example.textmate.sqlitehelper;
 
-import com.example.textmate.sqlite.models.textMateData;
-import com.example.textmate.sqlite.models.textMateScores;
+
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -20,9 +18,8 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
      //Logging Variable for Queries
     private static final String LOG = DatabaseHelper.class.getName();
-
     // Database name and Version for in-app use
-    public static final String DATABASE_NAME    = "TextMate";
+    public static final String DATABASE_NAME    = "TextMate.db";
     public static final int DATABASE_VERSION    = 1;
 
     // Database table name
@@ -30,26 +27,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     * store in /data/data/com.android.providers.telephony/mmssms.db
     * each thread stores metadata of a conversation namely SMS.
     * SMS are individual text messages sent/received within each Thread.*/
-    public static final String SMS_THREAD_TABLE = "thread";
-    public static final String SMS_TABLE   = "sms";
+    public static final String SMS_THREAD_TABLE = "thread_table";
+    public static final String SMS_TABLE        = "sms_table";
 
     // SMS_THREADS_TABLE columns
-    public static final String ID_THREAD        = "_id";
+    public static final String THREAD_ID        = "_id";
     public static final String THREAD_DATE      = "date";           // Created date for thread
     public static final String MESSAGE_COUNT    = "message_count";
-    public static final String RECIPIENT        = "recipient";      //
+    public static final String RECIPIENT        = "recipient";
     public static final String SNIPPET          = "snippet";        // Stores last sms in a thread
 
     // SMS_DATA_TABLE columns
-    public static final String ID_SMS           = "_id";
-    public static final String THREAD_ID        = "thread_id";      // Foreign key to reference THREAD_TABLE
+    public static final String SMS_ID           = "_id";
+    public static final String THREAD_ID_REF    = "thread_id";      // Foreign key to reference THREAD_TABLE
     public static final String ADDRESS          = "address";        // Recipient address
     public static final String PERSON           = "person";         // Recipient contact name
     public static final String RECEIVED_DATE    = "received_date";
     public static final String SENT_DATE        = "sent_date";
     public static final String BODY             = "body";
+    public static final String TYPE             = "type";
+    public static final String WORD_COUNT       = "word_count";
 
-
+    /*
     //TextMate Data Columns
     public static final String Data_Table_Name = "TextMateData";
     public static final String Data_Column1 = "ContactID";
@@ -68,23 +67,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String Scores_Column3 = "Scores";
     public static final String Scores_Column4 = "NumberOfUpdates";
 
-
     public static final String CREATE_THREADS_TABLE = "CREATE TABLE " + SMS_THREAD_TABLE + "("
-            + ID_THREAD + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + THREAD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + THREAD_DATE + " INTEGER DEFAULT 0, "
             + MESSAGE_COUNT + " INTEGER DEFAULT 0, "
             + RECIPIENT + " TEXT, "
             + SNIPPET + " TEXT" + ")";
 
     public static final String CREATE_SMS_TABLE = "CREATE TABLE " + SMS_TABLE + "("
-            + ID_SMS + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + "FOREIGN KEY(" + THREAD_ID + ") REFERENCES " + SMS_THREAD_TABLE + "(_id), "
+            + SMS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "FOREIGN KEY(" + THREAD_ID_REF + ") REFERENCES " + SMS_THREAD_TABLE + "(_id), "
             + ADDRESS + " TEXT, "
             + PERSON + " INTEGER, "
             + RECEIVED_DATE + " INTEGER, "
             + SENT_DATE + " INTEGER, "
-            + BODY + "TEXT" + ")";
+            + BODY + " TEXT, "
+            + TYPE + " TEXT, "
+            + WORD_COUNT + " INTEGER DEFAULT 0" + ")";
 
+    /*
     public static final String Create_Data_Table="CREATE TABLE "+Data_Table_Name+"("
             +Data_Column1+ "INTEGER PRIMARY KEY AUTOINCREMENT, "
             +Data_Column2+ "TEXT "
@@ -103,10 +104,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Class Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        SQLiteDatabase db = this.getWritableDatabase();
     }
 
     // onOpen method to enable the foreign key constraint
-    @Override
+    /*@Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
         if (!db.isReadOnly()) {
@@ -114,15 +116,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("PRAGMA foreign_key=ON;");
         }
     }
+    */
 
     // onCreate Method is basically the Constructor of the DB Class
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_THREADS_TABLE);
         db.execSQL(CREATE_SMS_TABLE);
-        db.execSQL(Create_Data_Table);
-        db.execSQL(Create_Score_Table);
-
     }
 
     // onUpgrade Method is updating the Database Version when Creating a new Version of an existing DB
@@ -130,9 +130,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + SMS_THREAD_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + SMS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + Scores_Table_Name);
-        db.execSQL("DROP TABLE IF EXISTS " + Data_Table_Name);
-        //Create New Tables
         onCreate(db);
     }
 
@@ -141,7 +138,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Inserts the Actual Data into the DB, boolean instead of void to ensure that data is inserted correctly
     //and the db.insert method returns -1 if it is not so we check to make sure it is not to ensure that
     //the data is inserted correctly
-    public boolean Data_insertData(String ID, String name, int charCount, int messageCount, double diffSentTime, double diffReturnTime) {
+    /*
+    public boolean Data_insertData(String ID, String name, int charCount,
+                                   int messageCount, double diffSentTime, double diffReturnTime) {
         ContentValues val = new ContentValues();
 
         val.put(Data_Column1, ID);               //The ID of the Contacts
@@ -310,7 +309,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[] {String.valueOf(scoreID)});
         db.close();
     }
-
-
 
 }
