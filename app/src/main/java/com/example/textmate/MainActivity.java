@@ -38,9 +38,9 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         textMateDB = new DatabaseHelper(this);
         ContentResolver contentResolver = getContentResolver();
-        //getSMSData2 updEmple = new getSMSData2();
-        //TextView tv1 = (TextView)findViewById(R.id.textView2);
-        //tv1.setText(updEmple.getSMSData(contentResolver));
+        getSMSData2 updEmple = new getSMSData2();
+        TextView tv1 = (TextView)findViewById(R.id.textView2);
+        tv1.setText(updEmple.getSMSData(contentResolver));
       //myTextDB = new textDB(this);
       //myScoreDB = new textScoreDB(this);
     }
