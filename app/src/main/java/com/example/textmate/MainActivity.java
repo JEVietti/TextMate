@@ -1,33 +1,17 @@
 package com.example.textmate;
 
-import android.widget.ArrayAdapter;
 import com.example.textmate.sqlitehelper.DatabaseHelper;
-import com.example.textmate.sqlite.models.textMateData;
-import com.example.textmate.sqlite.models.textMateScores;
+
+import android.database.SQLException;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import com.example.textmate.sqlitehelper.DatabaseHelper;
 
 public class MainActivity extends ActionBarActivity {
     // Create instance of Database
@@ -39,13 +23,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textMateDB = new DatabaseHelper(this);
-        ContentResolver contentResolver = getContentResolver();
-        getSMSData2 updEmple = new getSMSData2();
-        TextView tv1 = (TextView)findViewById(R.id.textView2);
-        tv1.setText(updEmple.getSMSData(contentResolver));
-      //myTextDB = new textDB(this);
-      //myScoreDB = new textScoreDB(this);
+        dbHelper = new DatabaseHelper(this);
+        fetchThread();
     }
 
     @Override
