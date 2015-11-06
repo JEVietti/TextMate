@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dbHelper = new DatabaseHelper(this);
-        fetchThread();
+        //fetchThread();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -54,8 +54,8 @@ public class MainActivity extends ActionBarActivity {
         ContentResolver contentResolver = getContentResolver();
 
         Cursor cursor = contentResolver.query(
-                Uri.parse("content://mms-sms/complete-conversations"),
-                new String[]{"date", "message_count", "recipient_ids", "snippet"},
+                Uri.parse("content://mms-sms/conversations/"),
+                new String[]{"date", "message_count", "recipient_ids"},
                 null,
                 null,
                 null);
@@ -68,10 +68,9 @@ public class MainActivity extends ActionBarActivity {
                     int init_date = cursor.getInt(cursor.getColumnIndex("date"));
                     int msg_count = cursor.getInt(cursor.getColumnIndex("message_count"));
                     String recipient = cursor.getString(cursor.getColumnIndex("recipient_ids"));
-                    String snippet = cursor.getString(cursor.getColumnIndex("snippet"));
                     //
                     try {
-                        dbHelper.insert_thread(init_date, msg_count, recipient, snippet);
+                        dbHelper.insert_thread(init_date, msg_count, recipient);
                         //fetchSMS(t_id);
                     } catch(SQLException e) {
                         Log.d("Failure", "Failed to insert!");
