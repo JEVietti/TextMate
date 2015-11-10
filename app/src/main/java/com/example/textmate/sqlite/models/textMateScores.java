@@ -4,20 +4,20 @@ import java.lang.String;
 
 public class textMateScores {
     private int id, numUpdate;
-    private int numScores = 30;
     private String name;
-    private double[] score = new double[numScores];
 
+    private double newScore,yestScore,avgScore;
    //Constructor
    //Empty Constructor
     public textMateScores(){}
     //Base Constructor
-    public textMateScores(int id,String name,double[] score, int numUpdate){
-        this.id=id;
-        this.name=name;
-        for(int i=0;i<numScores;i++){
-        this.score[i]=0;}
-        this.numUpdate=0;
+    public textMateScores(int id,String newName,double newScore,double yesterdayScore,double avgScore, int numUpdate){
+        this.id = id;
+        this.name = newName;
+        this.newScore = newScore;
+        this.yestScore = yesterdayScore;
+        this.avgScore = avgScore;
+        this.numUpdate = numUpdate;
     }
 
     //Class Methods
@@ -30,11 +30,20 @@ public class textMateScores {
     public int fetchNumUpdate(){return this.numUpdate;}
     public void setNumUpdate(int newNumUpdate){this.numUpdate=newNumUpdate;}
 
-    public double fetchScore(){return this.score[(this.numUpdate % this.numScores)];}
-    public void setScore(double newScore){
-        this.score[this.numUpdate%numScores] = newScore;
-        this.setNumUpdate(this.numUpdate+1);
-    }
 
+    public double fetchCurrScore(){return this.newScore;}
+
+    public void setNewYestScore(){this.yestScore=this.fetchCurrScore();}
+
+    public double fetchAvgScore(){return this.avgScore;}
+    public void setAvgScore(){
+        double oldAvg = fetchAvgScore();
+        double temp1,ans;
+        temp1 = oldAvg*this.numUpdate;
+        ans=temp1+fetchCurrScore();
+        this.setNumUpdate(this.numUpdate+1);
+        ans = ans/this.numUpdate;
+        this.avgScore=ans;
+    }
 
 }
