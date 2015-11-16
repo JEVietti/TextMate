@@ -2,6 +2,8 @@ package com.example.textmate;
 
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.database.SQLException;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -16,7 +18,8 @@ import android.net.Uri;
 public class MainActivity extends ActionBarActivity {
     // Create instance of Database
     // and, instance of ArrayList to query and store
-    // sms data from Android mmssms.db
+    // sms data from Android built-in database.
+    private ProgressDialog progressDialogInbox;
     DatabaseHelper dbHelper;
 
     @Override
@@ -24,7 +27,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dbHelper = new DatabaseHelper(this);
-        //fetchThread();
+        progressDialogInbox = new ProgressDialog(this);
+        fetchInboxMessages();
     }
 
     @Override
@@ -49,13 +53,68 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //
-    public void fetchThread() {
+    private void showProgressDialog(String message) {
+        //
+        progressDialogInbox.setMessage(message);
+        progressDialogInbox.setIndeterminate(true);
+        progressDialogInbox.setCancelable(true);
+        progressDialogInbox.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                stopThread();
+            }
+        });
+        progressDialogInbox.show();
+    }
+
+    private void fetchInboxMessages() {
+        showProgressDialog("TextMate is Fetching Inbox Messages...");
+        startThread();
+    }
+
+    private FetchMessageThread fetchMessageThread;
+    private int currentCount = 0;
+
+    // FetchMessageThread to create a parallel thread in order for
+    // the application to fetch the sms data and populate thread data.
+    public class FetchMessageThread extends Thread {
+        //
+        public int tag = -1;
+
+        public FetchMessageThread(int tag) {
+            this.tag = tag;
+        }
+
+        @Override
+        public void run() {
+            fetchSms();
+            progressDialogInbox.dismiss();
+        }
+    }
+
+    public synchronized void startThread() {
+        if (fetchMessageThread == null) {
+            fetchMessageThread = new FetchMessageThread(currentCount);
+            fetchMessageThread.start();
+        }
+    }
+
+    public synchronized void stopThread() {
+        if (fetchMessageThread != null) {
+            Log.i("Cancel thread", "stop thread");
+            FetchMessageThread moribund = fetchMessageThread;
+            currentCount = fetchMessageThread.tag == 0 ? 1 : 0;
+            fetchMessageThread = null;
+            moribund.interrupt();
+        }
+    }
+
+    public void fetchSms() {
         ContentResolver contentResolver = getContentResolver();
 
         Cursor cursor = contentResolver.query(
-                Uri.parse("content://mms-sms/conversations/"),
-                new String[]{"date", "message_count", "recipient_ids"},
+                Uri.parse("content://sms"),
+                new String[]{"thread_id", "address", "person", "date", "body", "type"},
                 null,
                 null,
                 null);
@@ -65,51 +124,40 @@ public class MainActivity extends ActionBarActivity {
             if (cursor.getCount() > 0) {
                 do {
                     // to grab the data
-                    int init_date = cursor.getInt(cursor.getColumnIndex("date"));
-                    int msg_count = cursor.getInt(cursor.getColumnIndex("message_count"));
-                    String recipient = cursor.getString(cursor.getColumnIndex("recipient_ids"));
+                    long t_id = cursor.getLong(cursor.getColumnIndex("thread_id"));
+                    String address = cursor.getString(cursor.getColumnIndex("address"));
+                    int person = cursor.getInt(cursor.getColumnIndex("person"));
+                    long date = cursor.getLong(cursor.getColumnIndex("date"));
+                    String body = cursor.getString(cursor.getColumnIndex("body"));
+                    int type = cursor.getInt(cursor.getColumnIndex("type"));
+                    //long dateSent = cursor.getLong(cursor.getColumnIndex("date_sent"));
                     //
                     try {
-                        dbHelper.insert_thread(init_date, msg_count, recipient);
-                        //fetchSMS(t_id);
-                    } catch(SQLException e) {
-                        Log.d("Failure", "Failed to insert!");
+                        switch (type) {
+                            case 1:
+                                String flag = "INCOMING";
+                                dbHelper.insert_sms(t_id, address, person, date, body, type, flag);
+                                break;
+                            case 2:
+                                flag = "OUTGOING";
+                                dbHelper.insert_sms(t_id, address, person, date, body, type, flag);
+                                break;
+                        }
+                    } catch (SQLException e) {
+                        Log.d("fetchSMS -> ", "INSERTION Failed!");
                     }
                 } while (cursor.moveToPrevious());
+                cursor.close();
             }
         }
-    }
 
-    /*
-    public void fetchSMS(long t_id) {
-        //ArrayList<Object> smsDataArray = new ArrayList<Object>();
-        Uri sms_uri = Uri.parse("content://sms");
-
-        ContentResolver contentResolver = getContentResolver();
-
-        Cursor cursor = contentResolver.query(
-                sms_uri,
-                new String[]{"thread_id", "address", "person", "data", "data_sent", "body", "type"},
-                "thread_id=" + t_id,
-                null,
-                "date" + "COLLATE LOCALIZED ASC");
-
-        if (cursor != null) {
-            cursor.moveToLast();
-            if (cursor.getCount() > 0) {
-                do {
-                    // to grab the data
-                    smsDataArray.add(cursor.getString(cursor.getColumnIndex("_id")));
-                    smsDataArray.add(cursor.getString(cursor.getColumnIndex("thread_id")));
-                    smsDataArray.add(cursor.getString(cursor.getColumnIndex("address")));
-                    smsDataArray.add(cursor.getString(cursor.getColumnIndex("person")));
-                    smsDataArray.add(cursor.getString(cursor.getColumnIndex("date")));
-                    smsDataArray.add(cursor.getString(cursor.getColumnIndex("date_sent")));
-                    smsDataArray.add(cursor.getString(cursor.getColumnIndex("body")));
-                    smsDataArray.add(cursor.getString(cursor.getColumnIndex("type")));
-                } while (cursor.moveToPrevious());
-            }
+        /* After fetchSMS is done, the dbHelper object will invoke the
+        * populateThread function to correctly populate the Thread table.
+        */
+        try {
+            dbHelper.populateThread();
+        } catch (SQLException e) {
+            Log.d("fetchSMS(pThread) -> ", "INSERTION Failed!");
         }
     }
-    */
 }
