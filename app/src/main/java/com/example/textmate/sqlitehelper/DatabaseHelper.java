@@ -7,12 +7,15 @@ import java.text.SimpleDateFormat;
 import java.sql.Date;
 import java.util.Locale;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 // Create a helper object to create, open, and/or manage a database.
@@ -131,6 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
         ContentValues val = new ContentValues();
 
+        //address = getContactName(android.content.Context, address);
         val.put(THREAD_ID_REF, t_id);
         val.put(ADDRESS, address);
         val.put(PERSON, person);
@@ -207,6 +211,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d("insertThread ->", "INSERTION Failed!");
         }
     }
+
+    /*public String getContactName(Context _context, String number) {
+        String name;
+        if(number != null && !number.equals("")){
+            // define the columns I want the query to return
+            String[] projection = new String[] {
+                    ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup._ID};
+
+            // encode the phone number and build the filter URI
+            Uri contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+
+            // query time
+            Cursor cursor = _context.getContentResolver().query(contactUri, projection, null, null, null);
+
+            if(cursor != null) {
+                if (cursor.moveToFirst()) {
+                    name =      cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
+                }
+                cursor.close();
+            }
+        }
+        return name;
+    }*/
 }
     /*
     //////////////////////////////TextMateData Table/////////////////////////////////////////////
