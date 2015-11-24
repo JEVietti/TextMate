@@ -3,8 +3,10 @@
 package com.example.textmate.sqlitehelper;
 
 import java.lang.String;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,6 +20,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 // Create a helper object to create, open, and/or manage a database.
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -68,8 +71,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + THREAD_ID_REF + " INTEGER NOT NULL, "
             + ADDRESS + " TEXT, "
             + PERSON + " INTEGER DEFAULT 0, "
-            + DATE_RECEIVED + " DATETIME, "
-            + DATE_SENT + " DATETIME, "
+            + DATE_RECEIVED + " DATETIME DEFAULT 0, "
+            + DATE_SENT + " DATETIME DEFAULT 0, "
             + BODY + " TEXT, "
             + WORD_COUNT + " INTEGER DEFAULT 0, "
             + TYPE + " INTEGER, "
@@ -248,36 +251,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Query  the database from a SQLite Execution String
     // Make sure to change to NON VOID once FIXED
-     void querySMSListOfTimeReceived(int ID) {
-             String fetchTimeReceivedList = "SELECT strftime('%s', date_received) AS diff_received " + "FROM sms" + "WHERE thread_id =" +ID;
-             Cursor cursor1 = db.rawQuery(fetchTimeReceivedList, null);
-             try {
-                 if (cursor1.moveToFirst()) {
-                     do {
-                         String FETCH_RECEIVED_TIMES = String.format(
-                                 "" + "",
-                                 cursor1.getLong(cursor1.getColumnIndex("date_received")));
-                         Cursor cursor2 = db.rawQuery(FETCH_RECEIVED_TIMES, null);
-                         if (cursor2 != null) {
-                             // retrieve the data related to a thread_id
-                             cursor2.moveToFirst();
-                             //Get the List of Received Times
-                             double receiveTimes[] = new double[cursor1.getCount()];
-                             for(int i=0;i<cursor1.getCount();i++) {
-                                 receiveTimes[i] = cursor2.getDouble(cursor1.getColumnIndex("received_times"));
-                             }
+    public ArrayList querySMSListOfTimeReceived(int ID) {
+        // array of double to store date_received columns
+        ArrayList<Double> receiveTimes = new ArrayList<Double>();
 
-                             cursor2.close();
-                         }
-                     } while (cursor1.moveToNext());
-                     cursor1.close();
-                 }
-             } catch (SQLException e) {
-                 Log.d("dbHelper(pThread) -> ", "INSERTION Failed!");
-             }
-     //return cursor2;
-     }
+        String fetchTimeReceivedList = String.format("SELECT strftime('%s', date_received) AS diff_received FROM sms WHERE thread_id=%s", ID);
 
+        Cursor cursor = db.rawQuery(fetchTimeReceivedList, null);
+
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    //
+                    receiveTimes.add((double) cursor.getLong(cursor.getColumnIndex("diff_received")));
+
+                } while (cursor.moveToNext());
+            }
+        } catch (SQLException e) {
+            Log.d("dbHelper(querySMS)-->", "INSERTION Failed!");
+        }
+
+        return receiveTimes;
+    }
 
     /*public String getContactName(Context _context, String number) {
         String name;
