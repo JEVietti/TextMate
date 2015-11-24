@@ -5,6 +5,7 @@ package com.example.textmate.sqlitehelper;
 import java.lang.String;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
+import java.util.List;
 import java.util.Locale;
 
 import android.content.ContentResolver;
@@ -244,7 +245,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d("insertThread ->", "INSERTION Failed!");
         }
     }
-    
+
+    //Query  the database from a SQLite Execution String
+    // Make sure to change to NON VOID once FIXED
+     void querySMSListOfTimeReceived(int ID) {
+             String fetchTimeReceivedList = "SELECT strftime('%s', date_received) AS diff_received " + "FROM sms" + "WHERE thread_id =" +ID;
+             Cursor cursor1 = db.rawQuery(fetchTimeReceivedList, null);
+             try {
+                 if (cursor1.moveToFirst()) {
+                     do {
+                         String FETCH_RECEIVED_TIMES = String.format(
+                                 "" + "",
+                                 cursor1.getLong(cursor1.getColumnIndex("date_received")));
+                         Cursor cursor2 = db.rawQuery(FETCH_RECEIVED_TIMES, null);
+                         if (cursor2 != null) {
+                             // retrieve the data related to a thread_id
+                             cursor2.moveToFirst();
+                             //Get the List of Received Times
+                             double receiveTimes[] = new double[cursor1.getCount()];
+                             for(int i=0;i<cursor1.getCount();i++) {
+                                 receiveTimes[i] = cursor2.getDouble(cursor1.getColumnIndex("received_times"));
+                             }
+
+                             cursor2.close();
+                         }
+                     } while (cursor1.moveToNext());
+                     cursor1.close();
+                 }
+             } catch (SQLException e) {
+                 Log.d("dbHelper(pThread) -> ", "INSERTION Failed!");
+             }
+     //return cursor2;
+     }
+
+
     /*public String getContactName(Context _context, String number) {
         String name;
         if(number != null && !number.equals("")){
