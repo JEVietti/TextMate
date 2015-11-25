@@ -1,6 +1,8 @@
 package com.example.textmate;
 
 import com.example.textmate.sqlitehelper.DatabaseHelper;
+import com.example.textmate.sqlite.models.textMateData;
+import com.example.textmate.alg;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -21,7 +23,8 @@ public class MainActivity extends ActionBarActivity {
     // sms data from Android built-in database.
     private ProgressDialog progressDialogInbox;
     DatabaseHelper dbHelper;
-
+    textMateData dbData;
+    alg scoreData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,4 +163,29 @@ public class MainActivity extends ActionBarActivity {
             Log.d("fetchSMS(pThread) -> ", "INSERTION Failed!");
         }
     }
+
+    //Use the textMateData Class to find the averages needed for the Algorithm.
+    //Then put the data into the sms data table.
+    public void populateData(){
+
+        int count = dbHelper.getThreadID();
+        for(int id=1;id<count;id++) {
+            dbData = new textMateData(id);
+            //:clean
+        }
+
+    }
+
+    //Use the Algorithm Class to Find the scores based on the data found in
+    // populate data. Then takes the scores and populate the thread table.
+    public void populateScores(){
+
+        //fetch the previous scores, and other non calculated info
+
+        // Pass the values into the Constructor
+        //scoreData = new alg(totalMessageCount,totalWordCount,timeSent,timeReceive);
+
+        //
+    }
+
 }
