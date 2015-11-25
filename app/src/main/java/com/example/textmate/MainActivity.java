@@ -1,5 +1,9 @@
 package com.example.textmate;
 
+import com.example.textmate.sqlitehelper.DatabaseHelper;
+import com.example.textmate.sqlite.models.textMateData;
+import com.example.textmate.alg;
+
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.database.SQLException;
@@ -12,11 +16,6 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.example.textmate.sqlitehelper.DatabaseHelper;
-import com.example.textmate.sqlite.models.textMateData;
-
-import java.util.ArrayList;
-
 
 public class MainActivity extends ActionBarActivity {
     // Create instance of Database
@@ -25,8 +24,7 @@ public class MainActivity extends ActionBarActivity {
     private ProgressDialog progressDialogInbox;
     DatabaseHelper dbHelper;
     textMateData dbData;
-    //alg scoreData;
-
+    alg scoreData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,21 +166,20 @@ public class MainActivity extends ActionBarActivity {
 
     //Use the textMateData Class to find the averages needed for the Algorithm.
     //Then put the data into the sms data table.
-    public void populateData() {
-        //
-        ArrayList<Integer> threadIds;
+    public void populateData(){
 
-        threadIds = dbHelper.getThreadIDs();
-
-        for (int i = 0; i < threadIds.size(); i++) {
-            dbData = new textMateData(threadIds.get(i));
-            dbData.initialize();
+        int count = dbHelper.getThreadID();
+        for(int id=1;id<=count;id++) {
+            dbData = new textMateData(id);
+            //:clean
         }
+
     }
 
     //Use the Algorithm Class to Find the scores based on the data found in
-    //populate data. Then takes the scores and populate the thread table.
-    public void populateScores() {
+    // populate data. Then takes the scores and populate the thread table.
+    public void populateScores(){
+
         //fetch the previous scores, and other non calculated info
 
         // Pass the values into the Constructor
