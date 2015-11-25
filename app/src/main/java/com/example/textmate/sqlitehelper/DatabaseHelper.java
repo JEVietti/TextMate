@@ -249,13 +249,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //getTHreadID
+    public int getThreadID() {
+        String getThreadTable = "SELECT count(_id) from threads";
+        Cursor c = db.rawQuery(getThreadTable,null);
+        int count = c.getCount();
+        return count;
+    }
+
     //Query  the database from a SQLite Execution String
     // Make sure to change to NON VOID once FIXED
     public ArrayList querySMSListOfTimeReceived(int ID) {
         // array of double to store date_received columns
         ArrayList<Double> receiveTimes = new ArrayList<Double>();
 
-        String fetchTimeReceivedList = String.format("SELECT strftime('%s', date_received) AS diff_received FROM sms WHERE thread_id=%s", ID);
+        String fetchTimeReceivedList = String.format("SELECT strftime('%s', date_received) AS diff_received FROM sms WHERE type=1 AND thread_id=%s", ID);
 
         Cursor cursor = db.rawQuery(fetchTimeReceivedList, null);
 

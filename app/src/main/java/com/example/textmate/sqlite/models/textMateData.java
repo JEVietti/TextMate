@@ -1,7 +1,9 @@
 package com.example.textmate.sqlite.models;
-
+import com.example.textmate.sqlitehelper.DatabaseHelper;
 import java.lang.String;
 import java.lang.Math;
+import java.util.ArrayList;
+
 import com.example.textmate.MainActivity;
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 
@@ -12,28 +14,25 @@ public class textMateData {
     //Class Variables
     private int id, numUpdate, wordCount, msgCount;
     private String name;
+    public DatabaseHelper upDB;
+
     int count;
     private double newAvgTimeSent, newAvgTimeRec, newAvgWordCount;
-    private int[] diffTimeSent = new int [count];
-    private int[] diffTimeReceive = new int[count];
+    private ArrayList<Integer> list;
     String createdTime; //keeps track when the database is created
     //Constructors
     public textMateData(){} //Empty Constructor
     //Constructor to initialize the data into the object of the class
-    public textMateData(int wordCount,int msgCount,int diffSentVal[],int diffReceiveVal[],int numUpdate,int count){
-        this.count = count;
-        //this.id = id;
+    public textMateData(int id){
+        this.count = upDB.getThreadID();
         //this.name = name;
-        this.wordCount = wordCount;
-        this.msgCount = msgCount;
-        for(int i=0;i<this.count;i++){
-        this.diffTimeSent[i] = diffSentVal[i];
-        this.diffTimeReceive[i] = diffReceiveVal[i];
-        }
-        this.newAvgTimeRec=this.setDiffTimeReceive();
-        this.newAvgTimeSent=this.setDiffTimeSent();
-        this.newAvgWordCount=this.setAvgWordCount();
-        this.numUpdate = numUpdate;
+       //this.wordCount = upDb.query;
+        //this.msgCount = upDb.query;
+        this.list = upDB.querySMSListOfTimeReceived(id);
+        //this.list2 = upDB.querySMSListOfTimeSent(id);
+        this.newAvgTimeRec = this.setDiffTimeReceive();
+        this.newAvgTimeSent = this.setDiffTimeSent();
+        this.newAvgWordCount = this.setAvgWordCount();
     }
 
     //Class Methods for setting the Values of the Columns for the textMateData Table
@@ -75,12 +74,12 @@ public class textMateData {
     //Calculates and Sets the Average Difference in time between Sent Messages of a Single Contact
     public double setDiffTimeSent() {
         double temp=0.0,ans = 0.0;
-        for (int i = 0; i < (this.count); i++) { ans+=temp;
+        for (int i = 0; i < (list.size()); i++) { ans+=temp;
             for (int j = i; j < i+1; j++) {
-                temp = Math.abs(this.diffTimeSent[j] - this.diffTimeSent[j + 1]);
+                temp = Math.abs(this.list.get(j) - this.list.get(j+1));
             }
         }
-        ans = ans / this.count;
+        ans = ans / this.list.size();
         return ans;
     }
     //Gives access to the AvgTimeReceived to put it back into a database
@@ -89,12 +88,12 @@ public class textMateData {
     //Calculates and sets the Average Difference in time bewtween Received Messages of a Single Contact
     public double setDiffTimeReceive(){
         double temp=0.0,ans = 0.0;
-        for (int i = 0; i < (this.count); i++) { ans+=temp;
+        for (int i = 0; i < (this.list.size()); i++) { ans+=temp;
             for (int j = i; j < i+1; j++) {
-                temp = Math.abs(this.diffTimeReceive[j] - this.diffTimeReceive[j + 1]);
+                temp = Math.abs(this.list.get(j) - this.list.get(j + 1));
             }
         }
-        ans = ans / this.count;
+        ans = ans / this.list.size();
         return ans;
     }
 
