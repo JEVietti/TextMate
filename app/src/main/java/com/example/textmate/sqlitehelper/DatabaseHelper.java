@@ -3,24 +3,18 @@
 package com.example.textmate.sqlitehelper;
 
 import java.lang.String;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 // Create a helper object to create, open, and/or manage a database.
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -29,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";
-    public static final int DATABASE_VERSION = 32;
+    public static final int DATABASE_VERSION = 33;
 
     // Database table name
     /* Threads are continuous conversations with a foreign recipient
@@ -62,6 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SCORE_YESTERDAY = "yesterday_score";
     public static final String SCORE_AVERAGE = "average_score";
     public static final String NUM_OF_UPDATES = "num_of_updates";
+    public static final String STATUS = "status";
     public static final String BIRTH = "birth";
     public static final String TIMESTAMP = "Timestamp";
 
@@ -94,6 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + SCORE_YESTERDAY + " REAL DEFAULT 0, "
             + SCORE_AVERAGE + " REAL DEFAULT 0, "
             + NUM_OF_UPDATES + " INTEGER DEFAULT 0, "
+            + STATUS + " TEXT, "
             + BIRTH + " DATETIME, "
             + TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP" + ");";
 
@@ -249,21 +245,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    //getTHreadID
-    public int getThreadID() {
-        String getThreadTable = "SELECT count(_id) from threads";
-        Cursor c = db.rawQuery(getThreadTable,null);
-        int count = c.getCount();
-        return count;
+    // Returns a list of all available threads within the threads table.
+    public ArrayList<Integer> getThreadIDs() {
+        //
+        db = this.getReadableDatabase();
+
+        // ArrayList of variable size to store distinct id in threads tables.
+        ArrayList<Integer> threadIds = new ArrayList<Integer>();
+
+        String THREAD_IDS = "SELECT DISTINCT _id AS id from threads";
+
+        Cursor cursor = db.rawQuery(THREAD_IDS, null);
+
+        if (cursor != null) {
+            cursor.moveToLast();
+            if (cursor.getCount() > 0) {
+                do {
+                    threadIds.add(cursor.getInt(cursor.getColumnIndex("id")));
+                } while (cursor.moveToPrevious());
+            }
+            cursor.close();
+        }
+
+        return threadIds;
     }
 
     //Query  the database from a SQLite Execution String
     // Make sure to change to NON VOID once FIXED
-    public ArrayList querySMSListOfTimeReceived(int ID) {
+    public ArrayList<Double> querySMSList(String dateType, int msgType, int id) {
         // array of double to store date_received columns
         ArrayList<Double> receiveTimes = new ArrayList<Double>();
 
-        String fetchTimeReceivedList = String.format("SELECT strftime('%s', date_received) AS diff_received FROM sms WHERE type=1 AND thread_id=%s", ID);
+        String fetchTimeReceivedList = String.format(
+                "SELECT strftime('%s', %s) AS diff " +
+                        "FROM sms " +
+                        "WHERE type=%s AND thread_id=%s", dateType, msgType, id);
 
         Cursor cursor = db.rawQuery(fetchTimeReceivedList, null);
 
@@ -271,13 +287,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     //
-                    receiveTimes.add((double) cursor.getLong(cursor.getColumnIndex("diff_received")));
-
+                    receiveTimes.add((double) cursor.getLong(cursor.getColumnIndex("diff")));
                 } while (cursor.moveToNext());
             }
         } catch (SQLException e) {
             Log.d("dbHelper(querySMS)-->", "INSERTION Failed!");
         }
+        cursor.close();
 
         return receiveTimes;
     }
