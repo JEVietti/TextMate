@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";
-    public static final int DATABASE_VERSION = 33;
+    public static final int DATABASE_VERSION = 36;
 
     // Database table name
     /* Threads are continuous conversations with a foreign recipient
@@ -50,8 +50,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String MESSAGE_COUNT = "message_count";
     public static final String RECIPIENT = "recipient";
     public static final String TOTAL_WORD_COUNT = "total_word_count";
+    public static final String DIFF_RECEIVE_TIME = "diff_receive_time";
     public static final String DIFF_SENT_TIME = "diff_sent_time";
-    public static final String DIFF_RETURN_TIME = "diff_return_time";
     public static final String SCORE_TODAY = "today_score";
     public static final String SCORE_YESTERDAY = "yesterday_score";
     public static final String SCORE_AVERAGE = "average_score";
@@ -83,8 +83,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + MESSAGE_COUNT + " INTEGER DEFAULT 0, "
             + RECIPIENT + " TEXT DEFAULT NULL, "
             + TOTAL_WORD_COUNT + " INTEGER DEFAULT 0, "
+            + DIFF_RECEIVE_TIME + " INTEGER DEFAULT 0, "
             + DIFF_SENT_TIME + " INTEGER DEFAULT 0, "
-            + DIFF_RETURN_TIME + " INTEGER DEFAULT 0, "
             + SCORE_TODAY + " REAL DEFAULT 0, "
             + SCORE_YESTERDAY + " REAL DEFAULT 0, "
             + SCORE_AVERAGE + " REAL DEFAULT 0, "
@@ -246,57 +246,93 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Returns a list of all available threads within the threads table.
-    public ArrayList<Integer> getThreadIDs() {
+    public ArrayList<Long> getThreadIDs() {
         //
         db = this.getReadableDatabase();
 
         // ArrayList of variable size to store distinct id in threads tables.
-        ArrayList<Integer> threadIds = new ArrayList<Integer>();
+        ArrayList<Long> threadIdsList = new ArrayList<Long>();
 
-        String THREAD_IDS = "SELECT DISTINCT _id AS id from threads";
+        String THREAD_IDS_LIST = "SELECT DISTINCT _id AS id from threads;";
 
-        Cursor cursor = db.rawQuery(THREAD_IDS, null);
+        Cursor cursor = db.rawQuery(THREAD_IDS_LIST, null);
 
         if (cursor != null) {
-            cursor.moveToLast();
+            cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 do {
-                    threadIds.add(cursor.getInt(cursor.getColumnIndex("id")));
-                } while (cursor.moveToPrevious());
+                    threadIdsList.add(cursor.getLong(cursor.getColumnIndex("id")));
+                } while (cursor.moveToNext());
             }
             cursor.close();
         }
 
-        return threadIds;
+        Log.i("INFO(getThreadIds)", threadIdsList.toString());
+
+        return threadIdsList;
+    }
+
+    // Executes query string
+    public ArrayList<Long> executeQuery(String query) {
+        //
+        Log.i("INFO(executeQuery)", query);
+
+        db = this.getReadableDatabase();
+
+        ArrayList<Long> dateTimes = new ArrayList<Long>();
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                do {
+                    dateTimes.add(cursor.getLong(cursor.getColumnIndex("diff")));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        Log.i("INFO(executeQuery", dateTimes.toString());
+
+        return dateTimes;
     }
 
     //Query  the database from a SQLite Execution String
     // Make sure to change to NON VOID once FIXED
-    public ArrayList<Double> querySMSList(String dateType, int msgType, int id) {
+    /*public ArrayList<Long> querySMSList(String dateType, String msgType, String id) {
         // array of double to store date_received columns
-        ArrayList<Double> receiveTimes = new ArrayList<Double>();
+        Log.i("INFO(querSMSList)", dateType);
 
-        String fetchTimeReceivedList = String.format(
-                "SELECT strftime('%s', %s) AS diff " +
-                        "FROM sms " +
-                        "WHERE type=%s AND thread_id=%s", dateType, msgType, id);
+        db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(fetchTimeReceivedList, null);
+        ArrayList<Long> dateTimes = new ArrayList<Long>();
 
-        try {
-            if (cursor.moveToFirst()) {
+        //String fetchTimeReceivedList = String.format(
+        //        "SELECT strftime('%s', %s) AS diff FROM sms WHERE type=%s AND thread_id=%s", "%s", dateType, msgType, id);
+
+        String fetchSMSList = String.format(
+                "SELECT %s AS diff FROM sms WHERE type=%s AND thread_id=%s;", dateType, msgType, id);
+
+        Log.i("INFO(querySMSList)", fetchSMSList);
+
+        Cursor cursor = db.rawQuery(fetchSMSList, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
                 do {
                     //
-                    receiveTimes.add((double) cursor.getLong(cursor.getColumnIndex("diff")));
+                    dateTimes.add(cursor.getLong(cursor.getColumnIndex("diff")));
                 } while (cursor.moveToNext());
             }
-        } catch (SQLException e) {
-            Log.d("dbHelper(querySMS)-->", "INSERTION Failed!");
+            cursor.close();
         }
-        cursor.close();
 
-        return receiveTimes;
-    }
+        Log.i("INFO(querySMSList)", dateTimes.toString());
+
+        return dateTimes;
+    }*/
 
     /*public String getContactName(Context _context, String number) {
         String name;

@@ -25,7 +25,6 @@ public class MainActivity extends ActionBarActivity {
     private ProgressDialog progressDialogInbox;
     DatabaseHelper dbHelper;
     textMateData dbData;
-    //alg scoreData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +93,7 @@ public class MainActivity extends ActionBarActivity {
         public void run() {
             fetchSms();
             progressDialogInbox.dismiss();
+            populateData();
         }
     }
 
@@ -170,25 +170,23 @@ public class MainActivity extends ActionBarActivity {
     //Then put the data into the sms data table.
     public void populateData() {
         //
-        ArrayList<Integer> threadIds;
-
-        threadIds = dbHelper.getThreadIDs();
+        ArrayList<Long> threadIds = dbHelper.getThreadIDs();
 
         for (int i = 0; i < threadIds.size(); i++) {
             dbData = new textMateData(threadIds.get(i));
             dbData.initialize();
+            dbData = null;
         }
     }
 
     //Use the Algorithm Class to Find the scores based on the data found in
     //populate data. Then takes the scores and populate the thread table.
-    public void populateScores() {
+    /*public void populateScores() {
         //fetch the previous scores, and other non calculated info
 
         // Pass the values into the Constructor
         //scoreData = new alg(totalMessageCount,totalWordCount,timeSent,timeReceive);
 
         //
-    }
-
+    }*/
 }
