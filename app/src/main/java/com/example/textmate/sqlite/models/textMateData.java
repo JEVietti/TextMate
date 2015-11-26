@@ -34,7 +34,7 @@ public class textMateData {
         this.newAvgWordCount = this.setAvgWordCount();
 
         //Update the Table with new Values
-        upDB.updateThreadTable(id,"threads","diff_received",this.newAvgTimeRec);
+        upDB.updateThreadTable(id,this.newAvgTimeRec,this.newAvgTimeSent,this.newAvgWordCount);
     }
 
     //Class Methods for setting the Values of the Columns for the textMateData Table

@@ -58,6 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TOTAL_WORD_COUNT = "total_word_count";
     public static final String DIFF_SENT_TIME = "diff_sent_time";
     public static final String DIFF_RETURN_TIME = "diff_return_time";
+    public static final String WORD_PER_MESSAGE = "word_per_message";
     public static final String SCORE_TODAY = "today_score";
     public static final String SCORE_YESTERDAY = "yesterday_score";
     public static final String SCORE_AVERAGE = "average_score";
@@ -88,8 +89,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + MESSAGE_COUNT + " INTEGER DEFAULT 0, "
             + RECIPIENT + " TEXT DEFAULT NULL, "
             + TOTAL_WORD_COUNT + " INTEGER DEFAULT 0, "
-            + DIFF_SENT_TIME + " INTEGER DEFAULT 0, "
-            + DIFF_RETURN_TIME + " INTEGER DEFAULT 0, "
+            + DIFF_SENT_TIME + " REAL DEFAULT 0, "
+            + DIFF_RETURN_TIME + " REAL DEFAULT 0, "
+            + WORD_PER_MESSAGE + "REAL DEFAULT 0"
             + SCORE_TODAY + " REAL DEFAULT 0, "
             + SCORE_YESTERDAY + " REAL DEFAULT 0, "
             + SCORE_AVERAGE + " REAL DEFAULT 0, "
@@ -340,9 +342,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return wordCount;
     }
-      //Update the Thread Table by passing the caluculated Values, the ID,and the Table Name and Column Name
-      public void updateThreadTable(int id,String Table,String Column,double value){
-          //db.update(Table,value,);
+      //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
+      //Column1,2,3 correspond to columns for diff_receive,diff_sent,and avgWord Columns in the Thread Table
+    public void updateThreadTable(int ID,double val1,double val2,double val3){
+          SQLiteDatabase dbUP = this.getWritableDatabase();
+          ContentValues args = new ContentValues();
+          args.put(DIFF_RETURN_TIME,val1);
+          args.put(DIFF_SENT_TIME,val2);
+          args.put(WORD_PER_MESSAGE,val3);
+          String whereClause = "_id="+ID;
+          db.update(THREAD_TABLE,args,whereClause,null);
 
       }
 
