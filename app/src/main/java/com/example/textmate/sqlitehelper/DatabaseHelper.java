@@ -91,7 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TOTAL_WORD_COUNT + " INTEGER DEFAULT 0, "
             + DIFF_SENT_TIME + " REAL DEFAULT 0, "
             + DIFF_RETURN_TIME + " REAL DEFAULT 0, "
-            + WORD_PER_MESSAGE + "REAL DEFAULT 0"
+            + WORD_PER_MESSAGE + " REAL DEFAULT 0, "
             + SCORE_TODAY + " REAL DEFAULT 0, "
             + SCORE_YESTERDAY + " REAL DEFAULT 0, "
             + SCORE_AVERAGE + " REAL DEFAULT 0, "
