@@ -31,7 +31,9 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         dbHelper = new DatabaseHelper(this);
         progressDialogInbox = new ProgressDialog(this);
-        fetchInboxMessages();
+        //fetchInboxMessages();
+        //populateData();
+        //populateScores();
     }
 
     @Override

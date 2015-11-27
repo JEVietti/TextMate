@@ -29,7 +29,7 @@ public class alg{
     //in order to compute this is just a thought of what it would be like
 
     //Class Variables
-    private int divisor, numUpdate; //Used to keep track of divisor and multiplier in order to find the averages
+    private int numUpdate; //Used to keep track of divisor and multiplier in order to find the averages
     // For instance 100+100+50/3 = 83.3 != ((100+100/2)+50)/2 = 75
      // so to fix this the divisor will be counted and kept track with the number of updates to the values
      // using it to multiply the initial value then add the new val increment divisor to find the new average.
@@ -38,9 +38,11 @@ public class alg{
                                                                       //and use it as a way to interpret the progress of the relationship
     private String relStatus;  //Prints to the user how the relationship is going with a contact
     private int wordCount,msgCount;
-    private double avgTimeRec,avgTimeSent;
+    private double avgTimeRec,avgTimeSent,WordPerMessage;
+    public DatabaseHelper upDBScores;
     //Constructors
-    public alg(int numTxt,int txtNumWord,double txtTimeSent,double txtTimeReceived,double valYesterday,double valAvg,double currScore, int numberUpdate){
+    public alg(int ID,int numTxt,int txtNumWord,double txtTimeSent,double txtTimeReceived,double wordPerMessage,double valYesterday,double valAvg,double currScore, int numberUpdate){
+        this.WordPerMessage = wordPerMessage;
         this.wordCount = numTxt;
         this.numUpdate = numberUpdate;
         this.msgCount = txtNumWord;
@@ -49,12 +51,14 @@ public class alg{
         this.oldValueYesterday = valYesterday;
         this.newValueYesterday = currScore;
         this.oldValueAvg = valAvg;
-        this.valSize = valSizeTxt(this.msgCount,this.wordCount) ;
-        this.valNum = valNumTxt(this.msgCount);
+        this.valSize = valSizeTimeTxt(this.WordPerMessage,this.avgTimeSent,this.avgTimeRec) ;
+        this.valNum = valSizeNumTxt(this.msgCount, this.wordCount);
         this.valTime = valTimeTxt(this.avgTimeSent, this.avgTimeRec);
         this.valueToday = this.weighValues(this.valNum, this.valSize,this.valTime);
         this.newValueAvg = this.NewAvgScore(this.oldValueAvg,this.valueToday,this.numUpdate);
-        this.relStatus = printStatusRel(this.valueToday,this.newValueYesterday);
+        this.relStatus = printStatusRel(this.valueToday,this.newValueYesterday,this.newValueAvg);
+
+        upDBScores.updateScoresOfThreadTable(ID,this.valueToday,this.newValueYesterday,this.newValueAvg,this.relStatus);
     }
 //Function Definitions and How the weights will be computed
 /*  May not need this part because of Built in class functions for models
@@ -64,14 +68,17 @@ public class alg{
   * between a certain time frame i.e. 24 hour cycle
   * The weight of which will be (#texts / time) */
     //Value for the number of texts in a day
-     public double valNumTxt(int x){return x/24;}
+     public double valSizeNumTxt(int MC,int WC){return((2*WC+MC)/100); }
 
     /*For the function valSizeTxt -> the value assigned based on
      * the Average size of the texts
      * based on the amount of characters over a certain time period i.e. 24 hour
      * The weight = ((#word total for all texts during day/ # of texts that day)/ time)*/
     //Value for the average size of texts in a day
-    public double valSizeTxt(int x,int y){return (x+y)/24;}
+    public double valSizeTimeTxt(double WPM,double TS,double TR){
+        double TSR = Math.abs(TS-TR);
+        return (WPM/TSR);
+    }
 
     /* For the Function valTimeTxt -> the value assigned based on
     * the Average time between messages throughout the day,
@@ -114,25 +121,25 @@ public class alg{
       * for example (v1<v2)&&(v1<baselineVal)
       * => " Your relationship is trending down and is not in  a good place "
       * */
-    //Comparison function of relationship values of today(v1) and yesterday(v2)
-    public String printStatusRel(double v1,double v2){
+    //Comparison function of relationship values of today(v1) and yesterday(v2) and AVG(v3)
+    public String printStatusRel(double v1,double v2,double v3){
         String ans, ans1, ans2;
         double BaseScore = 2.0; //The Base Score to compare users Scores with will update
                                 //score based on testing later in development
-        if(v1 < BaseScore)
+        if(v3 < BaseScore)
             ans1="In Bad Standing";
         else
             ans1="In Good Standing";
 
-        if(v1==v2)
+        if(v1==v2||v1==v3)
             ans2="Relationship Trending Neutral.";
-        else if (v1 < v2)
+        else if (v1 < v2||v1 < v3)
             ans2="Relationship Trending Down.";
         else
             ans2="Relationship Trending Up";
          ans=ans1+" and "+ans2;
         return ans;
-           }
+    }
     //Retrieve the Values of the Constructor to keep all the Class Variables Private that will
     //be pushed back into the table
     public int incrementNumUpdate(){return this.numUpdate++;}

@@ -4,24 +4,19 @@ import java.lang.String;
 import java.lang.Math;
 import java.util.ArrayList;
 
-import com.example.textmate.MainActivity;
-import com.example.textmate.sqlitehelper.DatabaseHelper;
-
 //Class for creating an object to set all of the columns
 //for each Contact in the TextMateData Table
 
 public class textMateData {
     //Class Variables
-    private int id, numUpdate, wordCount, msgCount;
-    private String name;
+    private int wordCount, msgCount;
     public DatabaseHelper upDB;
 
     int count;
     private double newAvgTimeSent, newAvgTimeRec, newAvgWordCount;
     private ArrayList<Integer> list,list2;
     String createdTime; //keeps track when the database is created
-    //Constructors
-    public textMateData(){} //Empty Constructor
+
     //Constructor to initialize the data into the object of the class
     public textMateData(int id){
         this.count = upDB.getThreadID();
@@ -34,7 +29,7 @@ public class textMateData {
         this.newAvgWordCount = this.setAvgWordCount();
 
         //Update the Table with new Values
-        upDB.updateThreadTable(id,this.newAvgTimeRec,this.newAvgTimeSent,this.newAvgWordCount);
+        upDB.updateDataOfThreadTable(id,this.newAvgTimeRec,this.newAvgTimeSent,this.newAvgWordCount);
     }
 
     //Class Methods for setting the Values of the Columns for the textMateData Table
@@ -52,14 +47,14 @@ public class textMateData {
     //public void setName(String newName){this.name=newName;}
 
     //Returns the Number of Updates which may be useful because of incrementing
-    public int fetchNumUpdate(){return this.numUpdate;}
+    //public int fetchNumUpdate(){return this.numUpdate;}
 
     //Increment the number of updates so the Averages for diff time receive and sent can be calculated
-    public void incNumUpdate(){
+    /*public void incNumUpdate(){
         int ans;
         ans = fetchNumUpdate()+1;
         this.numUpdate=ans;}
-
+      */
     //Gives access to AvgWordCount per Message fpr each Contact to put back into Database
     public double fetchAvgWordCount(){return this.newAvgWordCount;}
 

@@ -62,6 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SCORE_TODAY = "today_score";
     public static final String SCORE_YESTERDAY = "yesterday_score";
     public static final String SCORE_AVERAGE = "average_score";
+    public static final String RELATIONSHIP_STATUS = "relationship_status";
     public static final String NUM_OF_UPDATES = "num_of_updates";
     public static final String BIRTH = "birth";
     public static final String TIMESTAMP = "Timestamp";
@@ -95,6 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + SCORE_TODAY + " REAL DEFAULT 0, "
             + SCORE_YESTERDAY + " REAL DEFAULT 0, "
             + SCORE_AVERAGE + " REAL DEFAULT 0, "
+            + RELATIONSHIP_STATUS + " TEXT DEFAULT '', "
             + NUM_OF_UPDATES + " INTEGER DEFAULT 0, "
             + BIRTH + " DATETIME, "
             + TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP" + ");";
@@ -265,15 +267,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // array of integers to store date_received columns
         ArrayList<Integer> receiveTimes = new ArrayList<Integer>();
 
-        String fetchTimeReceivedList = String.format("SELECT strftime('%s',date_received) AS diff_received FROM sms WHERE type=1 AND thread_id=%s",ID);
-
+        String fetchTimeReceivedList = "SELECT strftime('%s',date_received) AS diff_received FROM sms WHERE type=1 AND thread_id="+ID;
         Cursor cursor = db.rawQuery(fetchTimeReceivedList, null);
 
         try {
             if (cursor.moveToFirst()) {
                 do {
                     //
-                    receiveTimes.add((Integer) cursor.getInt(cursor.getColumnIndex("diff_received")));
+                    receiveTimes.add(cursor.getInt(cursor.getColumnIndex("diff_received")));
 
                 } while (cursor.moveToNext());
             }
@@ -288,7 +289,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // array of integers to store date_received columns
         ArrayList<Integer> sentTimes = new ArrayList<Integer>();
 
-        String fetchTimeSentList = String.format("SELECT strftime('%s', date_sent) AS diff_sent FROM sms WHERE type=2 AND thread_id=%s",ID);
+        String fetchTimeSentList ="SELECT strftime('%s',date_sent) AS diff_sent FROM sms WHERE type=2 AND thread_id="+ID;
 
         Cursor cursor = db.rawQuery(fetchTimeSentList, null);
 
@@ -296,7 +297,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     //
-                    sentTimes.add((Integer) cursor.getInt(cursor.getColumnIndex("diff_sent")));
+                    sentTimes.add(cursor.getInt(cursor.getColumnIndex("diff_sent")));
 
                 } while (cursor.moveToNext());
             }
@@ -344,16 +345,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
       //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
       //Column1,2,3 correspond to columns for diff_receive,diff_sent,and avgWord Columns in the Thread Table
-    public void updateThreadTable(int ID,double val1,double val2,double val3){
-          SQLiteDatabase dbUP = this.getWritableDatabase();
+    public void updateDataOfThreadTable(int ID,double val1,double val2,double val3){
+          db = this.getWritableDatabase();
           ContentValues args = new ContentValues();
-          args.put(DIFF_RETURN_TIME,val1);
-          args.put(DIFF_SENT_TIME,val2);
-          args.put(WORD_PER_MESSAGE,val3);
+          args.put(DIFF_RETURN_TIME, val1);
+          args.put(DIFF_SENT_TIME, val2);
+          args.put(WORD_PER_MESSAGE, val3);
+        Log.d("UPDATE_THREAD_TABLE ->", "ARGUMENT CANT BE ADD");
           String whereClause = "_id="+ID;
           db.update(THREAD_TABLE,args,whereClause,null);
+        Log.d("UPDATE_THREAD_TABLE -> ", " DATA_VALUES_UPDATE_FAILED");
+    }
 
-      }
+    //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
+    //Column1,2,3 correspond to columns for diff_receive,diff_sent,and avgWord Columns in the Thread Table
+    public void updateScoresOfThreadTable(int ID,double val1,double val2,double val3,String relStatus) {
+        db = this.getWritableDatabase();
+        ContentValues args = new ContentValues();
+        args.put(SCORE_TODAY, val1);
+        args.put(SCORE_YESTERDAY, val2);
+        args.put(SCORE_AVERAGE, val3);
+        args.put(RELATIONSHIP_STATUS, relStatus);
+        Log.d("UPDATE_THREAD_TABLE ->", "SCORES ARGUMENT CANT BE ADD");
+        String whereClause = "_id=" + ID;
+        db.update(THREAD_TABLE, args, whereClause, null);
+        Log.d("UPDATE_THREAD_TABLE -> ", " SCORES_UPDATE_FAILED");
+    }
 
     /*public String getContactName(Context _context, String number) {
         String name;
