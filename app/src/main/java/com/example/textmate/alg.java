@@ -34,23 +34,24 @@ public class alg{
      // so to fix this the divisor will be counted and kept track with the number of updates to the values
      // using it to multiply the initial value then add the new val increment divisor to find the new average.
     private double valNum,valSize,valTime; //Store Value of Yesterday and Today to compare
-    private double oldValueYesterday,newValueYesterday, oldValueAvg, newValueAvg, valueToday;              //idea to store the average value
+    private double oldValueYesterday,newValueYesterday, oldValueAvg, newValueAvg, valueToday,currScore;              //idea to store the average value
                                                                       //and use it as a way to interpret the progress of the relationship
     private String relStatus;  //Prints to the user how the relationship is going with a contact
     private int wordCount,msgCount;
     private double avgTimeRec,avgTimeSent,WordPerMessage;
     public DatabaseHelper upDBScores;
     //Constructors
-    public alg(Long ID,int numTxt,int txtNumWord,double txtTimeSent,double txtTimeReceived,double wordPerMessage,double valYesterday,double valAvg,double currScore, int numberUpdate){
-        this.WordPerMessage = wordPerMessage;
-        this.wordCount = numTxt;
-        this.numUpdate = numberUpdate;
-        this.msgCount = txtNumWord;
-        this.avgTimeRec = txtTimeReceived;
-        this.avgTimeSent = txtTimeSent;
-        this.oldValueYesterday = valYesterday;
+    public alg(Long ID,DatabaseHelper upDBScores){
+        this.WordPerMessage = upDBScores.queryThreadIDWordPerMessageCount(ID);
+        this.wordCount = upDBScores.queryThreadsWordCount(ID);
+        this.numUpdate = upDBScores.queryThreadIDNumUpdates(ID);
+        this.msgCount = upDBScores.queryThreadIDMessageCount(ID);
+        this.avgTimeRec = upDBScores.queryThreadIDTimeAverages(ID,"diff_return_time");
+        this.avgTimeSent = upDBScores.queryThreadIDTimeAverages(ID,"diff_sent_time");
+        this.currScore = upDBScores.queryThreadIDScores(ID,"today_score");
+        this.oldValueYesterday = upDBScores.queryThreadIDScores(ID,"yesterday_score");
         this.newValueYesterday = currScore;
-        this.oldValueAvg = valAvg;
+        this.oldValueAvg = upDBScores.queryThreadIDScores(ID,"average_score");
         this.valSize = valSizeTimeTxt(this.WordPerMessage,this.avgTimeSent,this.avgTimeRec) ;
         this.valNum = valSizeNumTxt(this.msgCount, this.wordCount);
         this.valTime = valTimeTxt(this.avgTimeSent, this.avgTimeRec);

@@ -2,6 +2,7 @@ package com.example.textmate.sqlite.models;
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 import java.lang.String;
 import java.lang.Math;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 //Class for creating an object to set all of the columns
@@ -69,12 +70,14 @@ public class textMateData {
     //Calculates and Sets the Average Difference in time between Sent Messages of a Single Contact
     public double setDiffTimeSent() {
         double temp=0.0,ans = 0.0;
-        for (int i = 0; i < (list.size()); i++) { ans+=temp;
-            for (int j = i; j < i+1; j++) {
+        for (int i = 0; i<(list2.size()-1); i++) { ans+=temp;
+            for (int j = i; j <i+1; j++) {
                 temp = Math.abs(this.list2.get(j) - this.list2.get(j+1));
             }
         }
         ans = ans / this.list2.size();
+        ans=ans/60;
+        ans=Double.parseDouble(new DecimalFormat("#.##").format(ans));
         return ans;
     }
     //Gives access to the AvgTimeReceived to put it back into a database
@@ -83,12 +86,14 @@ public class textMateData {
     //Calculates and sets the Average Difference in time bewtween Received Messages of a Single Contact
     public double setDiffTimeReceive(){
         double temp=0.0,ans = 0.0;
-        for (int i = 0; i < (this.list.size()); i++) { ans+=temp;
+        for (int i = 0; i < (this.list.size()-1); i++) { ans+=temp;
             for (int j = i; j < i+1; j++) {
                 temp = Math.abs(this.list.get(j) - this.list.get(j + 1));
             }
         }
         ans = ans / this.list.size();
+        ans=ans/60;
+        ans=Double.parseDouble(new DecimalFormat("#.##").format(ans));
         return ans;
     }
 

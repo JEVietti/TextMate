@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SCORE_TODAY = "today_score";
     public static final String SCORE_YESTERDAY = "yesterday_score";
     public static final String SCORE_AVERAGE = "average_score";
-    public static final String RELATIONSHIP_STATUS = "relationship_status";
+    public static final String RELATIONSHIP_STATUS = "rel_status";
     public static final String NUM_OF_UPDATES = "num_of_updates";
     public static final String BIRTH = "birth";
     public static final String TIMESTAMP = "Timestamp";
@@ -161,8 +161,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Inserts the sms data from the built-in Android database.
-    public void insert_sms(long t_id, String address, int person,
-                              long date, String body, int type, String flag) {
+    public void insert_sms(long t_id, String address, int person,long date, String body, int type, String flag) {
         //
         db = this.getWritableDatabase();
         ContentValues val = new ContentValues();
@@ -255,7 +254,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    //getTHreadID
+    //getThreadIDs
     public ArrayList<Long> getThreadID() {
         db = this.getReadableDatabase();
 
@@ -273,7 +272,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             c.close();
         }
-    Log.i("INFO(getThreadIDs",threadIDList.toString());
+    Log.i("INFO(getThreadIDs", threadIDList.toString());
         return threadIDList;
     }
 
@@ -358,6 +357,80 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return wordCount;
     }
+
+    //Query  the database from a SQLite Execution String
+    public double queryThreadIDWordPerMessageCount(Long ID) {
+        //Integer Initialized at 0 that stores the fetch Word_Per_Messages of a Thread_ID
+        double WordPerMsgCount=0.0;
+        String fetchWordPerMessages = String.format("SELECT word_per_message AS wordPerMessage FROM threads WHERE _id=%s;",ID);
+
+        Cursor cursor = db.rawQuery(fetchWordPerMessages, null);
+        try {
+            if (cursor.moveToFirst()) {
+                WordPerMsgCount=cursor.getDouble(cursor.getColumnIndex("wordPerMessage"));
+            }
+
+        } catch (SQLException e) {
+            Log.d("dbHelp(queryTHREADS)-->", "FETCH MESSAGE_COUNT Failed!");
+        }
+        cursor.close();
+        return WordPerMsgCount;
+    }
+    //Query  the database from a SQLite Execution String
+    public int queryThreadIDNumUpdates(Long ID) {
+        //Integer Initialized at 0 that stores the fetch Message Count of a Thread_ID
+        int num=0;
+        String fetchNumberOfUpdates = String.format("SELECT num_of_updates AS numUpdates FROM threads WHERE _id=%s;",ID);
+
+        Cursor cursor = db.rawQuery(fetchNumberOfUpdates, null);
+        try {
+            if (cursor.moveToFirst()) {
+                num=cursor.getInt(cursor.getColumnIndex("numUpdates"));
+            }
+
+        } catch (SQLException e) {
+            Log.d("dbHelp(queryTHREADS)-->", "FETCH MESSAGE_COUNT Failed!");
+        }
+        cursor.close();
+        return num;
+    }
+
+    //Query  the database from a SQLite Execution String
+    public double queryThreadIDTimeAverages(Long ID,String date_type){
+        //Integer Initialized at 0 that stores the fetch Message Count of a Thread_ID
+        double avgTimes=0.0;
+        String fetchAvgTimeList = "SELECT "+date_type+" AS avgTimes FROM threads WHERE _id="+ID+";";
+
+        Cursor cursor = db.rawQuery(fetchAvgTimeList, null);
+        try {
+            if (cursor.moveToFirst()) {
+                avgTimes=cursor.getDouble(cursor.getColumnIndex("avgTimes"));
+            }
+
+        } catch (SQLException e) {
+            Log.d("dbHelp(queryTHREADS)-->", "FETCH AvgTimes Failed!");
+        }
+        cursor.close();
+        return avgTimes;
+    }
+    //Query  the database from a SQLite Execution String
+    public double queryThreadIDScores(Long ID,String score_type){
+        //Integer Initialized at 0 that stores the fetch Message Count of a Thread_ID
+        double score=0.0;
+        String fetchAvgTimeList = "SELECT "+score_type+" AS scores FROM threads WHERE _id="+ID+";";
+
+        Cursor cursor = db.rawQuery(fetchAvgTimeList, null);
+        try {
+            if (cursor.moveToFirst()) {
+                score=cursor.getDouble(cursor.getColumnIndex("scores"));
+            }
+
+        } catch (SQLException e) {
+            Log.d("dbHelp(queryTHREADS)-->", "FETCH scores Failed!");
+        }
+        cursor.close();
+        return score;
+    }
       //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
       //Column1,2,3 correspond to columns for diff_receive,diff_sent,and avgWord Columns in the Thread Table
     public void updateDataOfThreadTable(Long ID,double val1,double val2,double val3){
@@ -366,10 +439,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
           args.put(DIFF_RETURN_TIME, val1);
           args.put(DIFF_SENT_TIME, val2);
           args.put(WORD_PER_MESSAGE, val3);
-        Log.d("UPDATE_THREAD_TABLE ->", "ARGUMENT CANT BE ADD");
-          String whereClause = "_id="+ID;
+
+          String whereClause = "_id="+ID+";";
           db.update(THREAD_TABLE,args,whereClause,null);
-        Log.d("UPDATE_THREAD_TABLE -> ", " DATA_VALUES_UPDATE_FAILED");
     }
 
     //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
@@ -380,9 +452,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         args.put(SCORE_TODAY, val1);
         args.put(SCORE_YESTERDAY, val2);
         args.put(SCORE_AVERAGE, val3);
-        args.put(RELATIONSHIP_STATUS, relStatus);
+        //args.put(RELATIONSHIP_STATUS, relStatus);
         Log.d("UPDATE_THREAD_TABLE ->", "SCORES ARGUMENT CANT BE ADD");
-        String whereClause = "_id=" + ID;
+        String whereClause = "_id="+ID+";";
         db.update(THREAD_TABLE, args, whereClause, null);
         Log.d("UPDATE_THREAD_TABLE -> ", " SCORES_UPDATE_FAILED");
     }
