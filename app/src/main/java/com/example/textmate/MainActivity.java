@@ -7,6 +7,7 @@ import com.example.textmate.alg;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.database.SQLException;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.view.MenuItem;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -31,8 +34,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         dbHelper = new DatabaseHelper(this);
         progressDialogInbox = new ProgressDialog(this);
-        //fetchInboxMessages();
-        //populateData();
+        fetchInboxMessages();
+        populateData(dbHelper);
         //populateScores();
     }
 
@@ -168,14 +171,12 @@ public class MainActivity extends ActionBarActivity {
 
     //Use the textMateData Class to find the averages needed for the Algorithm.
     //Then put the data into the sms data table.
-    public void populateData(){
-
-        int count = dbHelper.getThreadID();
-        for(int id=1;id<=count;id++) {
-            dbData = new textMateData(id);
-            //:clean
+    public void populateData(DatabaseHelper dbHelper){
+         ArrayList<Long> threadIDs = dbHelper.getThreadID();
+        for(int pos=0;pos<=threadIDs.size();pos++) {
+            dbData = new textMateData(threadIDs.get(pos),dbHelper);
+            dbData = null;
         }
-
     }
 
     //Use the Algorithm Class to Find the scores based on the data found in

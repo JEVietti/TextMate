@@ -41,7 +41,7 @@ public class alg{
     private double avgTimeRec,avgTimeSent,WordPerMessage;
     public DatabaseHelper upDBScores;
     //Constructors
-    public alg(int ID,int numTxt,int txtNumWord,double txtTimeSent,double txtTimeReceived,double wordPerMessage,double valYesterday,double valAvg,double currScore, int numberUpdate){
+    public alg(Long ID,int numTxt,int txtNumWord,double txtTimeSent,double txtTimeReceived,double wordPerMessage,double valYesterday,double valAvg,double currScore, int numberUpdate){
         this.WordPerMessage = wordPerMessage;
         this.wordCount = numTxt;
         this.numUpdate = numberUpdate;

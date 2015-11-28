@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class textMateData {
     //Class Variables
     private int wordCount, msgCount;
-    public DatabaseHelper upDB;
 
     int count;
     private double newAvgTimeSent, newAvgTimeRec, newAvgWordCount;
@@ -18,8 +17,7 @@ public class textMateData {
     String createdTime; //keeps track when the database is created
 
     //Constructor to initialize the data into the object of the class
-    public textMateData(int id){
-        this.count = upDB.getThreadID();
+    public textMateData(Long id,DatabaseHelper upDB){
         this.wordCount = upDB.queryThreadsWordCount(id);
         this.msgCount = upDB.queryThreadIDMessageCount(id);
         this.list = upDB.querySMSListOfTimeReceived(id);
