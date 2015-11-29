@@ -37,7 +37,7 @@ public class alg{
     private double oldValueYesterday,newValueYesterday, oldValueAvg, newValueAvg, valueToday,currScore;              //idea to store the average value
                                                                       //and use it as a way to interpret the progress of the relationship
     private String relStatus;  //Prints to the user how the relationship is going with a contact
-    private int wordCount,msgCount;
+    private int wordCount,msgCount, newNumUpdate;
     private double avgTimeRec,avgTimeSent,WordPerMessage;
     public DatabaseHelper upDBScores;
     //Constructors
@@ -58,8 +58,7 @@ public class alg{
         this.valueToday = this.weighValues(this.valNum, this.valSize,this.valTime);
         this.newValueAvg = this.NewAvgScore(this.oldValueAvg,this.valueToday,this.numUpdate);
         this.relStatus = printStatusRel(this.valueToday,this.newValueYesterday,this.newValueAvg);
-
-        upDBScores.updateScoresOfThreadTable(ID,this.valueToday,this.newValueYesterday,this.newValueAvg,this.relStatus);
+        upDBScores.updateScoresOfThreadTable(ID,this.valueToday,this.newValueYesterday,this.newValueAvg,(this.numUpdate+1),this.relStatus);
     }
 //Function Definitions and How the weights will be computed
 /*  May not need this part because of Built in class functions for models

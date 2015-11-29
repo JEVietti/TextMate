@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";
-    public static final int DATABASE_VERSION = 32;
+    public static final int DATABASE_VERSION = 33;
 
     // Database table name
     /* Threads are continuous conversations with a foreign recipient
@@ -446,13 +446,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
     //Column1,2,3 correspond to columns for diff_receive,diff_sent,and avgWord Columns in the Thread Table
-    public void updateScoresOfThreadTable(Long ID,double val1,double val2,double val3,String relStatus) {
+    public void updateScoresOfThreadTable(Long ID,double val1,double val2,double val3,int val4,String relStatus) {
         db = this.getWritableDatabase();
         ContentValues args = new ContentValues();
         args.put(SCORE_TODAY, val1);
         args.put(SCORE_YESTERDAY, val2);
         args.put(SCORE_AVERAGE, val3);
-        //args.put(RELATIONSHIP_STATUS, relStatus);
+        args.put(NUM_OF_UPDATES,val4);
+        args.put(RELATIONSHIP_STATUS, relStatus);
         Log.d("UPDATE_THREAD_TABLE ->", "SCORES ARGUMENT CANT BE ADD");
         String whereClause = "_id="+ID+";";
         db.update(THREAD_TABLE, args, whereClause, null);

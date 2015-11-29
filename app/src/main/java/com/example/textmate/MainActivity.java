@@ -182,10 +182,6 @@ public class MainActivity extends ActionBarActivity {
     //Use the Algorithm Class to Find the scores based on the data found in
     // populate data. Then takes the scores and populate the thread table.
     public void populateScores(DatabaseHelper dbHelper){
-
-
-        //fetch the previous scores, and other non calculated info
-
         // Pass the values into the Constructor
         ArrayList<Long> threadIDs = dbHelper.getThreadID();
         for(int pos=0;pos<threadIDs.size();pos++) {
