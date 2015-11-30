@@ -1,5 +1,7 @@
 package com.example.textmate.sqlite.models;
 
+import android.util.Log;
+
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 import java.lang.String;
 import java.lang.Math;
@@ -15,7 +17,8 @@ public class textMateData {
 
     int count;
     private double newAvgTimeSent, newAvgTimeRec, newAvgWordCount;
-    private ArrayList<Integer> list,list2;
+    private ArrayList<Integer> list;
+    private ArrayList<Integer> list2;
     String createdTime; //keeps track when the database is created
 
     //Constructor to initialize the data into the object of the class
@@ -71,6 +74,9 @@ public class textMateData {
     //Calculates and Sets the Average Difference in time between Sent Messages of a Single Contact
     public double setDiffTimeSent() {
         double temp=0.0,ans = 0.0;
+        if(list2.size()==0){return ans;}
+        else if(list2.size()==1){return this.list2.get(0)/60;}
+        else{
         for (int i = 0; i<(list2.size()-1); i++) { ans+=temp;
             for (int j = i; j <i+1; j++) {
                 temp = Math.abs(this.list2.get(j) - this.list2.get(j+1));
@@ -80,22 +86,30 @@ public class textMateData {
         ans=ans/60;
         ans=Double.parseDouble(new DecimalFormat("#.##").format(ans));
         return ans;
+           }
     }
     //Gives access to the AvgTimeReceived to put it back into a database
     public double fetchDiffTimeReceive(){return this.newAvgTimeRec;}
 
     //Calculates and sets the Average Difference in time bewtween Received Messages of a Single Contact
-    public double setDiffTimeReceive(){
-        double temp=0.0,ans = 0.0;
-        for (int i = 0; i < (this.list.size()-1); i++) { ans+=temp;
-            for (int j = i; j < i+1; j++) {
-                temp = Math.abs(this.list.get(j) - this.list.get(j + 1));
+    public double setDiffTimeReceive() {
+        double temp = 0.0, ans = 0.0;
+        if (list2.size() == 0) {
+            return ans;
+        } else if (list2.size() == 1) {
+            return this.list2.get(0)/60;
+        } else {
+            for (int i = 0; i < (this.list.size() - 1); i++) {
+                ans += temp;
+                for (int j = i; j < i + 1; j++) {
+                    temp = Math.abs(this.list.get(j) - this.list.get(j + 1));
+                }
             }
+            ans = ans / this.list.size();
+            ans = ans / 60;
+            ans = Double.parseDouble(new DecimalFormat("#.##").format(ans));
+            return ans;
         }
-        ans = ans / this.list.size();
-        ans=ans/60;
-        ans=Double.parseDouble(new DecimalFormat("#.##").format(ans));
-        return ans;
     }
 
 }

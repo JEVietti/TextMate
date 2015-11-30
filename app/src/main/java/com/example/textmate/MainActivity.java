@@ -18,6 +18,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -28,6 +29,8 @@ public class MainActivity extends ActionBarActivity {
     DatabaseHelper dbHelper;
     textMateData dbData;
     alg scoreData;
+    Calendar c = Calendar.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +38,8 @@ public class MainActivity extends ActionBarActivity {
         dbHelper = new DatabaseHelper(this);
         progressDialogInbox = new ProgressDialog(this);
         fetchInboxMessages();
+        //Add in an if statement that prevents user from updating scores unless waiting at least a day
+
         populateData(dbHelper);
         populateScores(dbHelper);
     }

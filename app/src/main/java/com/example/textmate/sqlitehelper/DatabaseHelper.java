@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 47;
 
     // Database table name
     /* Threads are continuous conversations with a foreign recipient
@@ -281,7 +281,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // array of integers to store date_received columns
         ArrayList<Integer> receiveTimes = new ArrayList<Integer>();
 
-        String fetchTimeReceivedList = "SELECT strftime('%s',date_received) AS diff_received FROM sms WHERE type=1 AND thread_id="+ID+";";
+        String fetchTimeReceivedList = "SELECT DISTINCT strftime('%s',date_received) AS diff_received FROM sms WHERE type=1 AND thread_id="+ID+";";
         Cursor cursor = db.rawQuery(fetchTimeReceivedList, null);
 
         try {
@@ -303,7 +303,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // array of integers to store date_received columns
         ArrayList<Integer> sentTimes = new ArrayList<Integer>();
 
-        String fetchTimeSentList ="SELECT strftime('%s',date_sent) AS diff_sent FROM sms WHERE type=2 AND thread_id="+ID+";";
+        String fetchTimeSentList ="SELECT DISTINCT strftime('%s',date_sent) AS diff_sent FROM sms WHERE type=2 AND thread_id="+ID+";";
 
         Cursor cursor = db.rawQuery(fetchTimeSentList, null);
 
@@ -319,6 +319,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d("dbHelper(query)-->", "FETCH SENT_TIMES Failed!");
         }
         cursor.close();
+        Log.i("SENT TIME VALUES", sentTimes.toString());
         return sentTimes;
     }
     //Query  the database from a SQLite Execution String
@@ -429,11 +430,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d("dbHelp(queryTHREADS)-->", "FETCH scores Failed!");
         }
         cursor.close();
+        Log.i("Scores original Avg", "" + score);
         return score;
     }
       //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
       //Column1,2,3 correspond to columns for diff_receive,diff_sent,and avgWord Columns in the Thread Table
     public void updateDataOfThreadTable(Long ID,double val1,double val2,double val3){
+        Log.d("INFO(Data Value 2", val2+"");
           db = this.getWritableDatabase();
           ContentValues args = new ContentValues();
           args.put(DIFF_RETURN_TIME, val1);
@@ -441,7 +444,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
           args.put(WORD_PER_MESSAGE, val3);
 
           String whereClause = "_id="+ID+";";
-          db.update(THREAD_TABLE,args,whereClause,null);
+          db.update(THREAD_TABLE, args, whereClause, null);
     }
 
     //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
@@ -458,6 +461,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String whereClause = "_id="+ID+";";
         db.update(THREAD_TABLE, args, whereClause, null);
         Log.d("UPDATE_THREAD_TABLE -> ", " SCORES_UPDATE_FAILED");
+    }
+
+    public double queryTimeStampFromLastUpdate(Long ID){
+        double time=0.0;
+        String queryTimeStamp = "SELECT strftime('%s',TimeStamp)AS time_stamp FROM threads where thread_id ="+ID+";";
+        Cursor cursor = db.rawQuery(queryTimeStamp, null);
+        try {
+            if (cursor.moveToFirst()) {
+                time=cursor.getInt(cursor.getColumnIndex("time_stamp"));
+            }
+        } catch (SQLException e) {
+            Log.d("dbHelp(queryTHREADS)-->", "FETCH AvgTimes Failed!");
+        }
+        cursor.close();
+        time = time/86400; //convert seconds to days
+        return time;
     }
 
     /*public String getContactName(Context _context, String number) {
