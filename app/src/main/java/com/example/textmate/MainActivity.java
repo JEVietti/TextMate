@@ -127,9 +127,8 @@ public class MainActivity extends ActionBarActivity {
                 null,
                 null);
 
-        if (cursor != null) {
-            cursor.moveToLast();
-            if (cursor.getCount() > 0) {
+        try {
+            if (cursor.moveToLast()) {
                 do {
                     // to grab the data
                     long t_id = cursor.getLong(cursor.getColumnIndex("thread_id"));
@@ -157,6 +156,8 @@ public class MainActivity extends ActionBarActivity {
                 } while (cursor.moveToPrevious());
                 cursor.close();
             }
+        } catch (SQLException e) {
+                Log.d("fetchSms->", "INSERTION Failed!");
         }
 
         /* After fetchSMS is done, the dbHelper object will invoke the
@@ -172,7 +173,7 @@ public class MainActivity extends ActionBarActivity {
     //Use the textMateData Class to find the averages needed for the Algorithm.
     //Then put the data into the sms data table.
     public void populateData(DatabaseHelper dbHelper){
-         ArrayList<Long> threadIDs = dbHelper.getThreadID();
+        ArrayList<Long> threadIDs = dbHelper.getThreadID();
         for(int pos=0;pos<threadIDs.size();pos++) {
             dbData = new textMateData(threadIDs.get(pos),dbHelper);
             dbData = null;
@@ -188,7 +189,6 @@ public class MainActivity extends ActionBarActivity {
             scoreData = new alg(threadIDs.get(pos),dbHelper);
             scoreData=null;
         }
-        //
     }
 
 }

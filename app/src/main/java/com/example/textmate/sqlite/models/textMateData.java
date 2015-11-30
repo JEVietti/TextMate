@@ -1,4 +1,5 @@
 package com.example.textmate.sqlite.models;
+
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 import java.lang.String;
 import java.lang.Math;

@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";
-    public static final int DATABASE_VERSION = 33;
+    public static final int DATABASE_VERSION = 3;
 
     // Database table name
     /* Threads are continuous conversations with a foreign recipient
@@ -82,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TYPE + " INTEGER, "
             + BIRTH + " DATETIME, "
             + TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP, "
-            + "UNIQUE(" + DATE_RECEIVED + ") ON CONFLICT IGNORE, "
+            + "UNIQUE(" + SMS_ID + ") ON CONFLICT IGNORE, "
             + "FOREIGN KEY(" + THREAD_ID_REF + ") REFERENCES " + THREAD_TABLE + "(_id));";
 
 
@@ -173,9 +173,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (flag.equals("INCOMING")) {
             val.put(DATE_RECEIVED, getDateTime(date));
         }
-        else {
+        else
             val.put(DATE_SENT, getDateTime(date));
-        }
         val.put(BODY, body);
         val.put(WORD_COUNT, wordCount(body));
         val.put(TYPE, type);
@@ -215,10 +214,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         String recipient = cursor2.getString(cursor2.getColumnIndex("address"));
                         int totalWordCount = cursor2.getInt(cursor2.getColumnIndex("totalWordCount"));
                         int msgCount = cursor2.getInt(cursor2.getColumnIndex("cnt"));
-                        String lastSent = cursor2.getString(cursor2.getColumnIndex("firstMsg"));
+                        String init = cursor2.getString(cursor2.getColumnIndex("firstMsg"));
                         // Insert into THREAD table
                         try {
-                            insert_thread(thread_id, recipient, totalWordCount, msgCount, lastSent);
+                            insert_thread(thread_id, recipient, totalWordCount, msgCount, init);
                         } catch (SQLException e) {
                             Log.d("in-dbHelper(pThread) ->", "INSERTION Failed!");
                         }
@@ -235,7 +234,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Inserts the Actual Data into the DB, boolean instead of void to ensure that data is inserted correctly
     // and the db.insert method returns -1 if it is not so we check to make sure it is not to ensure that
     // the data is inserted correctly
-    public void insert_thread(long t_ID, String recipient, int totalWord, int msgCount, String t_date) {
+    public void insert_thread(long t_ID, String recipient, int totalWord, int msgCount, String init_date) {
         //
         db = this.getWritableDatabase();
         ContentValues val = new ContentValues();
@@ -244,9 +243,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         val.put(RECIPIENT, recipient);
         val.put(TOTAL_WORD_COUNT, totalWord);
         val.put(MESSAGE_COUNT, msgCount);  // Number of the messages in the thread
-        val.put(THREAD_DATE, t_date);
+        val.put(THREAD_DATE, init_date);
         val.put(BIRTH, getDateTime(java.lang.System.currentTimeMillis()));
-
+        //
         try {
             db.insertOrThrow(THREAD_TABLE, null, val);
         } catch (SQLException e) {
@@ -272,7 +271,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             c.close();
         }
-    Log.i("INFO(getThreadIDs", threadIDList.toString());
+        Log.i("INFO(getThreadIDs", threadIDList.toString());
+
         return threadIDList;
     }
 
