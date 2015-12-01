@@ -3,14 +3,11 @@
 package com.example.textmate.sqlitehelper;
 
 import java.lang.String;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -18,10 +15,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.net.Uri;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 // Create a helper object to create, open, and/or manage a database.
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -31,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";
-    public static final int DATABASE_VERSION = 47;
+    public static final int DATABASE_VERSION = 50;
 
     // Database table name
     /* Threads are continuous conversations with a foreign recipient

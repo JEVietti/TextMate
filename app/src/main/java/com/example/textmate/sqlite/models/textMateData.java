@@ -1,7 +1,5 @@
 package com.example.textmate.sqlite.models;
 
-import android.util.Log;
-
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 import java.lang.String;
 import java.lang.Math;

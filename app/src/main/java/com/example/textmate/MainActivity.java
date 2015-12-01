@@ -2,12 +2,10 @@ package com.example.textmate;
 
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 import com.example.textmate.sqlite.models.textMateData;
-import com.example.textmate.alg;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.database.SQLException;
-import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,8 +38,7 @@ public class MainActivity extends ActionBarActivity {
         fetchInboxMessages();
         //Add in an if statement that prevents user from updating scores unless waiting at least a day
 
-        populateData(dbHelper);
-        populateScores(dbHelper);
+
     }
 
     @Override
@@ -101,6 +98,8 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void run() {
             fetchSms();
+            populateData(dbHelper);
+            populateScores(dbHelper);
             progressDialogInbox.dismiss();
         }
     }
