@@ -451,10 +451,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         args.put(SCORE_AVERAGE, val3);
         args.put(NUM_OF_UPDATES,val4);
         args.put(RELATIONSHIP_STATUS, relStatus);
-        Log.d("UPDATE_THREAD_TABLE ->", "SCORES ARGUMENT CANT BE ADD");
         String whereClause = "_id="+ID+";";
         db.update(THREAD_TABLE, args, whereClause, null);
-        Log.d("UPDATE_THREAD_TABLE -> ", " SCORES_UPDATE_FAILED");
+    }
+
+    //Queries the Database for the phone number
+    public String queriesForPhoneNumber(Long id){
+        String time="";
+        String fetchPhoneNumbers = "SELECT recipients AS phone_number FROM threads WHERE _id="+id+";";
+
+        Cursor cursor = db.rawQuery(fetchPhoneNumbers, null);
+        try {
+            if (cursor.moveToFirst()) {
+                time=cursor.getString(cursor.getColumnIndex("phone_number"));
+            }
+
+        } catch (SQLException e) {
+            Log.d("dbHelp(queryTHREADS)-->", "FETCH AvgTimes Failed!");
+        }
+        cursor.close();
+        return time;
+    }
+
+    public Cursor queriesForAllRows(Long id){
+        String fetchAll = "SELECT * FROM threads;";
+
+        Cursor returnRows = db.rawQuery(fetchAll,null);
+        if(returnRows!=null){
+            returnRows.moveToFirst();
+        }
+        return returnRows;
     }
 
     public double queryTimeStampFromLastUpdate(Long ID){
@@ -472,6 +498,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         time = time/86400; //convert seconds to days
         return time;
     }
+
+
 
     /*public String getContactName(Context _context, String number) {
         String name;
