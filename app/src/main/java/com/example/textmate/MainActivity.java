@@ -5,7 +5,9 @@ import com.example.textmate.sqlite.models.textMateData;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.SQLException;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,20 +16,20 @@ import android.view.MenuItem;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-
 
 public class MainActivity extends ActionBarActivity {
     // Create instance of Database
     // and, instance of ArrayList to query and store
     // sms data from Android built-in database.
-    private ProgressDialog progressDialogInbox;
+    ProgressDialog progressDialogInbox;
     DatabaseHelper dbHelper;
     textMateData dbData;
     alg scoreData;
-    Calendar c = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +37,36 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         dbHelper = new DatabaseHelper(this);
         progressDialogInbox = new ProgressDialog(this);
-        fetchInboxMessages();
-        //Add in an if statement that prevents user from updating scores unless waiting at least a day
-
-
+        //
+        Button syncBtn = (Button) findViewById(R.id.syncButton);
+        syncBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new textMateTask().execute();
+            }
+        });
+        //
+        Button anlyzeBtn = (Button) findViewById(R.id.analyzeButton);
+        anlyzeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                populateData(dbHelper);
+                populateScores(dbHelper);
+                Toast.makeText(getApplicationContext(), "Done Analyzing Text Messages.",
+                        Toast.LENGTH_LONG).show();
+                progressDialogInbox.dismiss();
+            }
+        });
+        //
+        Button resultBtn = (Button) findViewById(R.id.resultButton);
+        resultBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Let's View the Results :)",
+                        Toast.LENGTH_LONG).show();
+                startActivity(new Intent(MainActivity.this, ResultActivity.class));
+            }
+        });
     }
 
     @Override
@@ -63,6 +91,32 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // AsynkTask class to do the Inbox Fetching in background
+    public class textMateTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog("TextMate is Fetching Inbox Messages...");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            fetchSms();
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            //
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(getApplicationContext(), "Done Fetching Text Messages.",
+                    Toast.LENGTH_LONG).show();
+            progressDialogInbox.dismiss();
+        }
+    }
+
     private void showProgressDialog(String message) {
         //
         progressDialogInbox.setMessage(message);
@@ -71,54 +125,10 @@ public class MainActivity extends ActionBarActivity {
         progressDialogInbox.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                stopThread();
+                //stopThread();
             }
         });
         progressDialogInbox.show();
-    }
-
-    private void fetchInboxMessages() {
-        showProgressDialog("TextMate is Fetching Inbox Messages...");
-        startThread();
-    }
-
-    private FetchMessageThread fetchMessageThread;
-    private int currentCount = 0;
-
-    // FetchMessageThread to create a parallel thread in order for
-    // the application to fetch the sms data and populate thread data.
-    public class FetchMessageThread extends Thread {
-        //
-        public int tag = -1;
-
-        public FetchMessageThread(int tag) {
-            this.tag = tag;
-        }
-
-        @Override
-        public void run() {
-            fetchSms();
-            populateData(dbHelper);
-            populateScores(dbHelper);
-            progressDialogInbox.dismiss();
-        }
-    }
-
-    public synchronized void startThread() {
-        if (fetchMessageThread == null) {
-            fetchMessageThread = new FetchMessageThread(currentCount);
-            fetchMessageThread.start();
-        }
-    }
-
-    public synchronized void stopThread() {
-        if (fetchMessageThread != null) {
-            Log.i("Cancel thread", "stop thread");
-            FetchMessageThread moribund = fetchMessageThread;
-            currentCount = fetchMessageThread.tag == 0 ? 1 : 0;
-            fetchMessageThread = null;
-            moribund.interrupt();
-        }
     }
 
     public void fetchSms() {
@@ -194,5 +204,4 @@ public class MainActivity extends ActionBarActivity {
             scoreData=null;
         }
     }
-
 }

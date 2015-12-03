@@ -4,18 +4,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.textmate.ContactActivity"
-              android:background="@drawable/abc_menu_dropdown_panel_holo_light">
+    tools:context="com.example.textmate.ResultActivity">
 
-    <!-- <TextView android:text="@string/title_activity_contact" android:layout_width="wrap_content"
-         android:layout_height="wrap_content"-->
 
     <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-    </ListView>
-
+        android:id="@+id/resultView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
-

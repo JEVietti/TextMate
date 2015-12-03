@@ -14,14 +14,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 // Create a helper object to create, open, and/or manage a database.
 public class DatabaseHelper extends SQLiteOpenHelper {
     //
     SQLiteDatabase db;
-    SQLiteQueryBuilder queryBuilder;
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";

@@ -9,26 +9,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="SMS Inbox"
+        android:text="TextMate"
         android:id="@+id/textView"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/textView2"
-        android:layout_gravity="right"
+        android:text="TextMate Sync"
+        android:id="@+id/syncButton"
+        android:layout_marginTop="48dp"
         android:layout_below="@+id/textView"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true" />
 
-    <ListView android:id="@+id/SMSList"
+    <Button
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_below="@+id/textView"
+        android:text="TextMate Analyze"
+        android:id="@+id/analyzeButton"
+        android:layout_marginTop="29dp"
+        android:layout_below="@+id/syncButton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextMate Result"
+        android:id="@+id/resultButton"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
