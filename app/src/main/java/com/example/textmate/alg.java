@@ -104,7 +104,7 @@ public class alg{
     *  */
     //Combined value for the functions above
     public double weighValues(double v1,double v2,double v3){
-        double ans = (2*v1)+(3*v2)+(2*v3)/3;
+        double ans = ((2*v1)+(3*v2)+(2*v3))/3;
         ans=ans/100;
         ans = Double.parseDouble(new DecimalFormat("#.##").format(ans));
         return ans;
@@ -130,19 +130,19 @@ public class alg{
     //Comparison function of relationship values of today(v1) and yesterday(v2) and AVG(v3)
     public String printStatusRel(double v1,double v2,double v3){
         String ans, ans1, ans2;
-        double BaseScore1 = 100.0; //The Base Score to compare users Scores with will update
-        double BaseScore2 = 20.0;  //score based on testing later in development
+        double BaseScore1 = 50.0; //The Base Score to compare users Scores with will update
+        double BaseScore2 = 15.0;  //score based on testing later in development
         if(v3 >= BaseScore1||v3<BaseScore2)
-            ans1="In Bad Standing";
+            ans1="Your relationship is in Bad Standing";
         else
-            ans1="In Good Standing";
+            ans1="Your relationship is in Good Standing";
 
         if(v1==v2||v1==v3)
-            ans2="Relationship Trending Neutral.";
+            ans2="is consistent";
         else if (v1 < v2||v1 < v3)
-            ans2="Relationship Trending Down.";
+            ans2="is getting better!";
         else
-            ans2="Relationship Trending Up";
+            ans2="is getting worse!";
          ans=ans1+" and "+ans2;
         return ans;
     }

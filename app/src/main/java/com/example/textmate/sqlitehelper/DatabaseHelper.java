@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";
-    public static final int DATABASE_VERSION = 50;
+    public static final int DATABASE_VERSION = 61;
 
     // Database table name
     /* Threads are continuous conversations with a foreign recipient
@@ -473,7 +473,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return time;
     }
 
-    public Cursor queriesForAllRows(Long id){
+    public Cursor queriesForAllRows(){
         String fetchAll = "SELECT * FROM threads;";
 
         Cursor returnRows = db.rawQuery(fetchAll,null);

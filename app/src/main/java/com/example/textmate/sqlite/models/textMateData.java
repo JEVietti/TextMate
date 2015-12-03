@@ -92,11 +92,10 @@ public class textMateData {
     //Calculates and sets the Average Difference in time bewtween Received Messages of a Single Contact
     public double setDiffTimeReceive() {
         double temp = 0.0, ans = 0.0;
-        if (list2.size() == 0) {
-            return ans;
-        } else if (list2.size() == 1) {
-            return this.list2.get(0)/60;
-        } else {
+        if (list2.size() == 0) {return ans;}
+         else if (list2.size() == 1) {
+            return this.list2.get(0)/60;}
+        else {
             for (int i = 0; i < (this.list.size() - 1); i++) {
                 ans += temp;
                 for (int j = i; j < i + 1; j++) {
