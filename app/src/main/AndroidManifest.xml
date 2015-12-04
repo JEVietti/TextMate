@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.textmate" >
-
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -22,14 +20,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ResultActivity"
-            android:label="@string/title_activity_result" >
+            android:name=".contacts"
+            android:label="@string/title_activity_contacts" >
             <intent-filter>
-                <action android:name="com.example.textmate.ResultActivity" />
+                <action android:name="android.intent.action.CONTACTS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".contactInfo"
+            android:label="@string/title_activity_contact_info" >
+            <intent-filter>
+                <action android:name="android.intent.action.CONTACTINFO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

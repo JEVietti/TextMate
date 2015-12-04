@@ -1,72 +1,98 @@
+
 package com.example.textmate;
 
-import com.example.textmate.sqlitehelper.DatabaseHelper;
-import com.example.textmate.sqlite.models.textMateData;
-
+import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.SQLException;
-import android.os.AsyncTask;
+import android.provider.ContactsContract;
+import android.content.Intent;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import com.example.textmate.sqlitehelper.DatabaseHelper;
+import com.example.textmate.sqlite.models.textMateData;
+import com.example.textmate.sqlite.models.textMateScores;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.List;
+
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.util.Vector;
+
+
 
 public class MainActivity extends ActionBarActivity {
-    // Create instance of Database
-    // and, instance of ArrayList to query and store
-    // sms data from Android built-in database.
-    ProgressDialog progressDialogInbox;
+ /*   private ProgressDialog progressDialogInbox;
     DatabaseHelper dbHelper;
     textMateData dbData;
     alg scoreData;
-
+    Calendar c = Calendar.getInstance(); */
+    //textDB myTextDB;
+    //textScoreDB myScoreDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dbHelper = new DatabaseHelper(this);
+   /*     dbHelper = new DatabaseHelper(this);
         progressDialogInbox = new ProgressDialog(this);
-        //
-        Button syncBtn = (Button) findViewById(R.id.syncButton);
-        syncBtn.setOnClickListener(new View.OnClickListener() {
+        fetchInboxMessages();
+        populateData(dbHelper);
+        populateScores(dbHelper);*/
+
+          //  ListView listView = (ListView) findViewById(R.id.SMSList);
+       // final ArrayList<Long> contacts = dbHelper.getThreadID();
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, contacts);
+        //listView.setAdapter(adapter);
+
+        //Assigning an adapter
+       // ArrayAdapter<DatabaseHelper> adapter = new ArrayAdapter<DatabaseHelper>(this,android.R.layout.simple_list_item_1, android.R.id.text1,  dbHelper);
+       // listView.setAdapter(adapter);
+    //    TextView tv1 = (TextView)findViewById(R.id.textView2);
+    //    tv1.setText(updEmple.getSMSData(contentResolver));
+        Button contactButton = (Button)findViewById(R.id.contact_button);
+        contactButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                new textMateTask().execute();
+                switch(v.getId())
+                {
+                    case R.id.contact_button:
+                        Intent newActivity = new Intent("android.intent.action.CONTACTS");
+                       // newActivity.putExtra("list", contacts);
+                        startActivity(newActivity);
+                        break;
+                }
             }
         });
-        //
-        Button anlyzeBtn = (Button) findViewById(R.id.analyzeButton);
-        anlyzeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                populateData(dbHelper);
-                populateScores(dbHelper);
-                Toast.makeText(getApplicationContext(), "Done Analyzing Text Messages.",
-                        Toast.LENGTH_LONG).show();
-                progressDialogInbox.dismiss();
-            }
-        });
-        //
-        Button resultBtn = (Button) findViewById(R.id.resultButton);
-        resultBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Let's View the Results :)",
-                        Toast.LENGTH_LONG).show();
-                startActivity(new Intent(MainActivity.this, ResultActivity.class));
-            }
-        });
+
+        //getSMSData2 updEmple = new getSMSData2();
+        //TextView tv1 = (TextView)findViewById(R.id.textView2);
+        //tv1.setText(updEmple.getSMSData(contentResolver));
+      //myTextDB = new textDB(this);
+      //myScoreDB = new textScoreDB(this);
     }
 
     @Override
@@ -83,41 +109,14 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        // noinspection SimplifiableIfStatement
+        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-    // AsynkTask class to do the Inbox Fetching in background
-    public class textMateTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            showProgressDialog("TextMate is Fetching Inbox Messages...");
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            fetchSms();
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            //
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            Toast.makeText(getApplicationContext(), "Done Fetching Text Messages.",
-                    Toast.LENGTH_LONG).show();
-            progressDialogInbox.dismiss();
-        }
-    }
-
-    private void showProgressDialog(String message) {
+    /*private void showProgressDialog(String message) {
         //
         progressDialogInbox.setMessage(message);
         progressDialogInbox.setIndeterminate(true);
@@ -125,10 +124,52 @@ public class MainActivity extends ActionBarActivity {
         progressDialogInbox.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //stopThread();
+                stopThread();
             }
         });
         progressDialogInbox.show();
+    }
+
+    private void fetchInboxMessages() {
+        showProgressDialog("TextMate is Fetching Inbox Messages...");
+        startThread();
+    }
+
+    private FetchMessageThread fetchMessageThread;
+    private int currentCount = 0;
+
+    // FetchMessageThread to create a parallel thread in order for
+    // the application to fetch the sms data and populate thread data.
+    public class FetchMessageThread extends Thread {
+        //
+        public int tag = -1;
+
+        public FetchMessageThread(int tag) {
+            this.tag = tag;
+        }
+
+        @Override
+        public void run() {
+            fetchSms();
+            progressDialogInbox.dismiss();
+        }
+    }
+
+    public synchronized void startThread() {
+        if (fetchMessageThread == null) {
+            fetchMessageThread = new FetchMessageThread(currentCount);
+            fetchMessageThread.start();
+        }
+    }
+
+    public synchronized void stopThread() {
+        if (fetchMessageThread != null) {
+            Log.i("Cancel thread", "stop thread");
+            FetchMessageThread moribund = fetchMessageThread;
+            currentCount = fetchMessageThread.tag == 0 ? 1 : 0;
+            fetchMessageThread = null;
+            moribund.interrupt();
+        }
     }
 
     public void fetchSms() {
@@ -171,13 +212,13 @@ public class MainActivity extends ActionBarActivity {
                 cursor.close();
             }
         } catch (SQLException e) {
-                Log.d("fetchSms->", "INSERTION Failed!");
+            Log.d("fetchSms->", "INSERTION Failed!");
         }
 
         /* After fetchSMS is done, the dbHelper object will invoke the
         * populateThread function to correctly populate the Thread table.
         */
-        try {
+  /*      try {
             dbHelper.populateThread();
         } catch (SQLException e) {
             Log.d("fetchSMS(pThread) -> ", "INSERTION Failed!");
@@ -203,5 +244,8 @@ public class MainActivity extends ActionBarActivity {
             scoreData = new alg(threadIDs.get(pos),dbHelper);
             scoreData=null;
         }
-    }
+    } */
 }
+
+
+

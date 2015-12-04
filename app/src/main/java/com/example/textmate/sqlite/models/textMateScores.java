@@ -7,8 +7,8 @@ public class textMateScores {
     private String name;
 
     private double newScore,yestScore,avgScore;
-   //Constructor
-   //Empty Constructor
+    //Constructor
+    //Empty Constructor
     public textMateScores(){}
     //Base Constructor
     public textMateScores(int id,String newName,double newScore,double yesterdayScore,double avgScore, int numUpdate){

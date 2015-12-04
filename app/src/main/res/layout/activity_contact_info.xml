@@ -12,7 +12,7 @@
 
     <TextView
         android:id="@+id/myImageViewText"
-        android:layout_width="141dp"
+        android:layout_width="190dp"
         android:layout_height="144dp"
         android:layout_alignLeft="@+id/myImageView"
         android:layout_alignTop="@+id/myImageView"
@@ -30,31 +30,50 @@
     <TextView
         android:layout_width="140dp"
         android:layout_height="38dp"
-        android:text="Mike Wazowski"
         android:id="@+id/contactName"
-        android:layout_x="178dp"
-        android:layout_y="25dp"
+        android:layout_x="208dp"
+        android:layout_y="40dp"
         android:textSize="@dimen/abc_action_bar_title_text_size"
         android:textColor="#ffffff"
         android:textIsSelectable="false" />
- <!--   <com.jjoe64.graphview.GraphView
+  <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
         android:layout_height="200dip"
         android:id="@+id/graph"
-        android:layout_x="402dp"
-        android:layout_y="304dp"
-        android:background="@drawable/abc_ab_bottom_solid_light_holo" /> -->
-
- <!--   <com.jjoe64.graphview.helper.GraphViewXML
-        android:layout_width="291dp"
-        android:layout_height="179dp"
-        app:seriesData="0=5;1=10;2=5;3=0;4=2"
-        app:seriesType="line"
-        app:seriesColor="#ee0000"
-        android:layout_x="23dp"
-        android:layout_y="277dp"
+        android:layout_x="-4dp"
+        android:layout_y="280dp"
         android:background="@drawable/abc_ab_bottom_solid_light_holo" />
-    android:layout_x="0dp"
-    android:layout_y="300dp" /> -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="3 min ago"
+        android:id="@+id/lastTextTime"
+        android:layout_x="20dp"
+        android:layout_y="222dp"
+        android:textColor="#fffcff" />
+
+     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Relationship Status:"
+        android:id="@+id/lastTextPlacer"
+        android:layout_x="20dp"
+        android:layout_y="185dp"
+        android:textColor="#ffffff" />
+
+    <!--  <com.jjoe64.graphview.helper.GraphViewXML
+           android:layout_width="291dp"
+           android:layout_height="179dp"
+           app:seriesData="0=5;1=10;2=5;3=0;4=2"
+           app:seriesType="line"
+           app:seriesColor="#ee0000"
+           android:layout_x="23dp"
+           android:layout_y="277dp"
+           android:background="@drawable/abc_ab_bottom_solid_light_holo" />
+       android:layout_x="0dp"
+       android:layout_y="300dp" /> -->
 
 </AbsoluteLayout>
