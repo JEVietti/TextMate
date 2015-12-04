@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and Version for in-app use
     public static final String DATABASE_NAME = "TextMate.db";
-    public static final int DATABASE_VERSION = 61;
+    public static final int DATABASE_VERSION = 5;
 
     // Database table name
     /* Threads are continuous conversations with a foreign recipient
@@ -197,7 +197,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                     "SUM(word_count) AS totalWordCount, " +
                                     "MIN(date_received) AS firstMsg " +
                                     "FROM sms WHERE thread_id=%s;",
-                                cursor1.getLong(cursor1.getColumnIndex("thread_id")));
+                            cursor1.getLong(cursor1.getColumnIndex("thread_id")));
                     Cursor cursor2 = db.rawQuery(FETCH_THREAD_DATA, null);
                     if (cursor2 != null) {
                         // retrieve the data related to a thread_id
@@ -250,7 +250,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db = this.getReadableDatabase();
 
         ArrayList<Long> threadIDList = new ArrayList<Long>();
-        String getThreadTable = "SELECT DISTINCT _id AS id from threads;";
+        String getThreadTable = "SELECT DISTINCT _id AS id from threads WHERE message_count>10 AND total_word_count>50;";
         Cursor c = db.rawQuery(getThreadTable, null);
 
         if (c != null) {
@@ -323,8 +323,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(fetchTimeSentList, null);
         try {
             if (cursor.moveToFirst()) {
-                    msgCount=cursor.getInt(cursor.getColumnIndex("messageCount"));
-                }
+                msgCount=cursor.getInt(cursor.getColumnIndex("messageCount"));
+            }
 
         } catch (SQLException e) {
             Log.d("dbHelp(queryTHREADS)-->", "FETCH MESSAGE_COUNT Failed!");
@@ -425,23 +425,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.i("Scores original Avg", "" + score);
         return score;
     }
-      //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
-      //Column1,2,3 correspond to columns for diff_receive,diff_sent,and avgWord Columns in the Thread Table
-    public void updateDataOfThreadTable(Long ID,double val1,double val2,double val3){
-        Log.d("INFO(Data Value 2", val2+"");
-          db = this.getWritableDatabase();
-          ContentValues args = new ContentValues();
-          args.put(DIFF_RETURN_TIME, val1);
-          args.put(DIFF_SENT_TIME, val2);
-          args.put(WORD_PER_MESSAGE, val3);
-
-          String whereClause = "_id="+ID+";";
-          db.update(THREAD_TABLE, args, whereClause, null);
-    }
-
     //Update the Thread Table by passing the calculated Values, the ID,and the Table Name and Column Name
     //Column1,2,3 correspond to columns for diff_receive,diff_sent,and avgWord Columns in the Thread Table
+    public void updateDataOfThreadTable(Long ID,double val1,double val2,double val3){
+        Log.d("INFO(Data Value REC", val1+"");
+        Log.d("INFO(Data Value SENT", val2+"");
+        Log.d("INFO(Data Value AVGWORD", val3+"");
+        db = this.getWritableDatabase();
+        ContentValues args = new ContentValues();
+        args.put(DIFF_RETURN_TIME, val1);
+        args.put(DIFF_SENT_TIME, val2);
+        args.put(WORD_PER_MESSAGE, val3);
+
+        String whereClause = "_id="+ID+";";
+        db.update(THREAD_TABLE, args, whereClause, null);
+    }
+
+    //Update the Thread Table by passing the calculated Values of Scores
     public void updateScoresOfThreadTable(Long ID,double val1,double val2,double val3,int val4,String relStatus) {
+        Log.d("INFO(Score Value Today", val1+"");
+        Log.d("INFO(Score Value Yest", val2+"");
+        Log.d("INFO(Sore Value Avg", val3+"");
         db = this.getWritableDatabase();
         ContentValues args = new ContentValues();
         args.put(SCORE_TODAY, val1);
@@ -455,24 +459,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Queries the Database for the phone number
     public String queriesForPhoneNumber(Long id){
-        String time="";
-        String fetchPhoneNumbers = "SELECT recipients AS phone_number FROM threads WHERE _id="+id+";";
+        String numbers="";
+        String fetchPhoneNumbers = "SELECT recipient AS phone_number FROM threads WHERE _id="+id+";";
 
         Cursor cursor = db.rawQuery(fetchPhoneNumbers, null);
         try {
             if (cursor.moveToFirst()) {
-                time=cursor.getString(cursor.getColumnIndex("phone_number"));
+                numbers=cursor.getString(cursor.getColumnIndex("phone_number"));
             }
 
         } catch (SQLException e) {
             Log.d("dbHelp(queryTHREADS)-->", "FETCH AvgTimes Failed!");
         }
         cursor.close();
-        return time;
+        return numbers;
     }
 
-    public Cursor queriesForAllRows(){
-        String fetchAll = "SELECT * FROM threads;";
+    public Cursor queriesForAllRowsWithBaseMessageCount(){
+        String fetchAll = "SELECT * FROM threads WHERE message_count>10;";
 
         Cursor returnRows = db.rawQuery(fetchAll,null);
         if(returnRows!=null){
@@ -522,4 +526,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return name;
     }*/
+
+    public String queryForRelationshipMessage(Long id){
+        String status="";
+        String fetchPhoneNumbers = "SELECT rel_status AS relationship_status FROM threads WHERE _id="+id+";";
+
+        Cursor cursor = db.rawQuery(fetchPhoneNumbers, null);
+        try {
+            if (cursor.moveToFirst()) {
+                status=cursor.getString(cursor.getColumnIndex("relationship_status"));
+            }
+        } catch (SQLException e) {
+            Log.d("dbHelp(queryTHREADS)-->", "FETCH Relationship Status!");
+        }
+        cursor.close();
+        return status;
+
+
+    }
 }

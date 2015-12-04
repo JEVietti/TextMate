@@ -1,5 +1,7 @@
 package com.example.textmate.sqlite.models;
 
+import android.util.Log;
+
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 import java.lang.String;
 import java.lang.Math;
@@ -42,7 +44,7 @@ public class textMateData {
     //public void setId(int newID){this.id=newID;}
 
     // Get the Name of row
-   // public String fetchName(){return this.name;}
+    // public String fetchName(){return this.name;}
 
     // Set a new Name for a row
     //public void setName(String newName){this.name=newName;}
@@ -75,16 +77,16 @@ public class textMateData {
         if(list2.size()==0){return ans;}
         else if(list2.size()==1){return this.list2.get(0)/60;}
         else{
-        for (int i = 0; i<(list2.size()-1); i++) { ans+=temp;
-            for (int j = i; j <i+1; j++) {
-                temp = Math.abs(this.list2.get(j) - this.list2.get(j+1));
+            for (int i = 0; i<(list2.size()-1); i++) { ans+=temp;
+                for (int j = i; j <i+1; j++) {
+                    temp = Math.abs(this.list2.get(j) - this.list2.get(j+1));
+                }
             }
+            ans = ans / this.list2.size();
+            ans=ans/60;
+            ans=Double.parseDouble(new DecimalFormat("#.##").format(ans));
+            return ans;
         }
-        ans = ans / this.list2.size();
-        ans=ans/60;
-        ans=Double.parseDouble(new DecimalFormat("#.##").format(ans));
-        return ans;
-           }
     }
     //Gives access to the AvgTimeReceived to put it back into a database
     public double fetchDiffTimeReceive(){return this.newAvgTimeRec;}
@@ -92,10 +94,11 @@ public class textMateData {
     //Calculates and sets the Average Difference in time bewtween Received Messages of a Single Contact
     public double setDiffTimeReceive() {
         double temp = 0.0, ans = 0.0;
-        if (list2.size() == 0) {return ans;}
-         else if (list2.size() == 1) {
-            return this.list2.get(0)/60;}
-        else {
+        if (list2.size() == 0) {
+            return ans;
+        } else if (list2.size() == 1) {
+            return this.list2.get(0)/60;
+        } else {
             for (int i = 0; i < (this.list.size() - 1); i++) {
                 ans += temp;
                 for (int j = i; j < i + 1; j++) {
