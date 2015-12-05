@@ -36,8 +36,9 @@ public class alg{
     // For instance 100+100+50/3 = 83.3 != ((100+100/2)+50)/2 = 75
     // so to fix this the divisor will be counted and kept track with the number of updates to the values
     // using it to multiply the initial value then add the new val increment divisor to find the new average.
-    private double valNum,valSize,valTime; //Store Value of Yesterday and Today to compare
+    private double valTimeNum,valTimeSize,valTimeWPM; //Store Value of Yesterday and Today to compare
     private double newValueYesterday, oldValueAvg, newValueAvg, valueToday,currScore;              //idea to store the average value
+    private int valSize;
     //and use it as a way to interpret the progress of the relationship
     private String relStatus;  //Prints to the user how the relationship is going with a contact
     private int wordCount,msgCount, newNumUpdate;
@@ -54,10 +55,11 @@ public class alg{
         this.newValueYesterday = currScore;
         this.oldValueAvg = upDBScores.queryThreadIDScores(ID,"average_score");
 
-        this.valSize = valSizeTimeTxt(this.WordPerMessage,this.avgTimeSent,this.avgTimeRec) ;
-        this.valNum = valSizeNumTxt(this.msgCount, this.wordCount);
-        this.valTime = valTimeTxt(this.avgTimeSent, this.avgTimeRec);
-        this.valueToday = this.weighValues(this.valNum, this.valSize,this.valTime);
+        this.valSize = this.valSizeNumTxt(this.msgCount,this.wordCount) ;
+        this.valTimeNum = this.valTimeTxtCount(this.avgTimeSent,this.avgTimeRec,this.msgCount);
+        this.valTimeSize = this.valTimeTxtSize(this.avgTimeSent, this.avgTimeRec,this.wordCount);
+        this.valTimeWPM = this.valTimeTxtWPM(this.avgTimeSent,this.avgTimeRec,this.WordPerMessage);
+        this.valueToday = this.weighValues(this.valSize,this.valTimeNum,this.valTimeSize,this.valTimeWPM);
         this.newValueAvg = this.NewAvgScore(this.oldValueAvg,this.valueToday,this.numUpdate);
         this.relStatus = printStatusRel(this.valueToday,this.newValueYesterday,this.newValueAvg);
         upDBScores.updateScoresOfThreadTable(ID,this.valueToday,this.newValueYesterday,this.newValueAvg,(this.numUpdate),this.relStatus);
@@ -67,14 +69,14 @@ public class alg{
 
 */
 // For the function valNumTxt -> the value assigned based on the # of texts and messages
-    private double valSizeNumTxt(int MC,int WC){return (MC/WC); }
+    private int valSizeNumTxt(int MC,int WC){return MC+WC; }
 
     /*For the function valSizeTxt -> the value assigned based on
      * the Average size of the texts
      * based on the amount of characters over a certain time period i.e. 24 hour
      * The weight = ((#word total for all texts during day/ # of texts that day)/ time)*/
     //Value for the average size of texts in a day
-    private double valSizeTimeTxt(double WPM,double TS,double TR){
+    private double valTimeTxtWPM(double TS,double TR,double WPM){
         double TSR = Math.abs(TS-TR);
         return (TSR/WPM);
     }
@@ -86,13 +88,21 @@ public class alg{
     * from the contact all will be combined into a single value
     * */
     //Value for the time for both received and sent messages
-    private double valTimeTxt(double tS,double tR) {
+    private double valTimeTxtCount(double tS,double tR,int numMessage) {
         double ans, tSR;
 
         tSR = Math.abs(tS - tR);
         ans = (tS + tR); //Temp = Avg timeSent + 2*timeRec
-        ans = ans - tSR;       //Temp = Temp - Avg TimeBetweenSentAndReceived
-        return ans / 24; //Temp/hours in a day
+        ans = ((ans - tSR)/60);       //Temp = Temp - Avg
+        return ans /numMessage;
+    }
+
+    private double valTimeTxtSize(double tS,double tR,int wordCount){
+        double ans, tSR;
+        tSR = Math.abs(tS - tR);
+        ans=tSR/60;
+        ans = ans/wordCount;
+        return ans;
     }
 
     /* The function weighValues is used to combine the values of the previously
@@ -100,9 +110,8 @@ public class alg{
     *  => into a single value score which will be stored into a variable valToday
     *  */
     //Combined value for the functions above
-    private double weighValues(double v1,double v2,double v3){
-        double ans = ((2*v1)+(3*v2)+(2*v3))/3;
-        ans=ans/100;
+    private double weighValues(int size,double timeMSGC,double timeWC,double timeWPM){
+        double ans = (((3*timeWPM)+(2*timeMSGC)+(3*timeWC))/size);
         ans = Double.parseDouble(new DecimalFormat("#.##").format(ans));
         return ans;
     }
@@ -127,7 +136,7 @@ public class alg{
     //Comparison function of relationship values of today(v1) and yesterday(v2) and AVG(v3)
     private String printStatusRel(double v1,double v2,double v3){
         String ans, ans1, ans2;
-        double BaseScore1 = 50.0; //The Base Score to compare users Scores with will update
+        double BaseScore1 = 10.0; //The Base Score to compare users Scores with will update
         double BaseScore2 = 0.0;  //score based on testing later in development
         if(v3 >= BaseScore1||v3==BaseScore2)
             ans1="Your relationship is in Bad Standing";
@@ -135,7 +144,7 @@ public class alg{
             ans1="Your relationship is in Good Standing";
 
         if(v1==v2||v1==v3)
-            ans2="is consistent";
+            ans2="is consistent!";
         else if (v1 < v2||v1 < v3)
             ans2="is getting better!";
         else
