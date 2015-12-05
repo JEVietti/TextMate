@@ -20,8 +20,8 @@
         android:layout_alignBottom="@+id/myImageView"
         android:layout_margin="1dp"
         android:gravity="center"
-        android:text="7"
-        android:textColor="#FFFFFF"
+        android:text="_"
+        android:textColor="#073E52"
         android:layout_x="-6dp"
         android:layout_y="3dp"
         android:textSize="@android:dimen/notification_large_icon_height"
@@ -34,7 +34,7 @@
         android:layout_x="208dp"
         android:layout_y="3dp"
         android:textSize="@dimen/abc_action_bar_title_text_size"
-        android:textColor="#ffffff"
+        android:textColor="#FFFFFF"
         android:textIsSelectable="false" />
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
