@@ -1,14 +1,14 @@
 <AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.textmate.ContactInfoActivity"
-    android:background="@drawable/abc_cab_background_top_holo_dark">
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context="com.example.textmate.ContactInfoActivity"
+                android:background="@drawable/abc_cab_background_top_holo_dark">
 
     <TextView
         android:id="@+id/myImageViewText"
@@ -32,13 +32,13 @@
         android:layout_height="38dp"
         android:id="@+id/contactName"
         android:layout_x="208dp"
-        android:layout_y="40dp"
+        android:layout_y="3dp"
         android:textSize="@dimen/abc_action_bar_title_text_size"
         android:textColor="#ffffff"
         android:textIsSelectable="false" />
-  <com.jjoe64.graphview.GraphView
+    <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
-        android:layout_height="200dip"
+        android:layout_height="176dp"
         android:id="@+id/graph"
         android:layout_x="-4dp"
         android:layout_y="280dp"
@@ -48,20 +48,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="3 min ago"
         android:id="@+id/lastTextTime"
-        android:layout_x="20dp"
+        android:layout_x="-2dp"
         android:layout_y="222dp"
         android:textColor="#fffcff" />
 
-     <TextView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Relationship Status:"
         android:id="@+id/lastTextPlacer"
-        android:layout_x="20dp"
+        android:layout_x="-2dp"
         android:layout_y="185dp"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="351dp"
+        android:layout_height="34dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="   Average             Yesterday               Today"
+        android:id="@+id/textView"
+        android:layout_x="-2dp"
+        android:layout_y="460dp"
         android:textColor="#ffffff" />
 
     <!--  <com.jjoe64.graphview.helper.GraphViewXML
