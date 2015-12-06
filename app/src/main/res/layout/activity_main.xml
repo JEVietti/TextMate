@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="SMS Inbox"
+        android:text=""
         android:id="@+id/testBox"
         android:layout_gravity="center_horizontal" />
 
@@ -41,13 +41,13 @@
         android:layout_alignTop="@+id/settings_button"
         android:layout_alignStart="@+id/SMSList" />
 
-    <Button android:layout_width="95dp" android:layout_height="95dp" android:text="Settings"
+    <Button android:layout_width="95dp" android:layout_height="95dp" android:text="Edit"
         android:id="@+id/settings_button" android:textColor="#ffffff"
         android:background="@drawable/abc_ab_bottom_solid_dark_holo"
         android:layout_alignTop="@+id/edit_button" android:layout_centerHorizontal="true"
         android:layout_x="116dp" android:layout_y="239dp" />
 
-    <Button android:layout_width="95dp" android:layout_height="95dp" android:text="Edit"
+    <Button android:layout_width="95dp" android:layout_height="95dp" android:text="Info"
         android:id="@+id/edit_button" android:background="@drawable/abc_ab_bottom_solid_dark_holo"
         android:textColor="#fff9fe"
         android:layout_x="226dp" android:layout_y="239dp"

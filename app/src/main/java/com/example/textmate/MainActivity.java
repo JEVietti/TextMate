@@ -43,7 +43,7 @@ import android.widget.Button;
 
 import java.util.Vector;
 
-
+//Most of the Functionality previously written here which is now commented out was moved to contacts.java
 
 public class MainActivity extends ActionBarActivity {
  /*   private ProgressDialog progressDialogInbox;
