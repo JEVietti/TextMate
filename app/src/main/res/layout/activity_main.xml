@@ -4,15 +4,15 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
-    android:background="@drawable/abc_menu_hardkey_panel_holo_dark">
+    android:background="@drawable/abc_cab_background_bottom_holo_dark">
 
-    <TextView
+<!--    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text=""
         android:id="@+id/testBox"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal" /> -->
 
    <!-- <TextView
         android:layout_width="wrap_content"
@@ -25,37 +25,50 @@
         android:layout_alignParentStart="true" /> -->
 
 
-    <ListView android:id="@+id/SMSList"
+<!--    <ListView android:id="@+id/SMSList"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_below="@+id/testBox"
         android:layout_centerHorizontal="true"
-        android:background="#fcffff" />
+        android:background="#fcffff" /> -->
 
     <Button android:layout_width="95dp" android:layout_height="95dp" android:text="Contacts"
         android:id="@+id/contact_button"
         android:background="@drawable/abc_ab_bottom_solid_dark_holo" android:textColor="#ffffff"
         android:layout_x="8dp" android:layout_y="239dp"
-        android:layout_alignTop="@+id/settings_button"
-        android:layout_alignStart="@+id/SMSList" />
+        android:layout_above="@+id/settings_button"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
 
-    <Button android:layout_width="95dp" android:layout_height="95dp" android:text="Edit"
+       <Button android:layout_width="100dp" android:layout_height="95dp" android:text="Settings"
         android:id="@+id/settings_button" android:textColor="#ffffff"
         android:background="@drawable/abc_ab_bottom_solid_dark_holo"
-        android:layout_alignTop="@+id/edit_button" android:layout_centerHorizontal="true"
-        android:layout_x="116dp" android:layout_y="239dp" />
+        android:layout_x="116dp" android:layout_y="239dp"
+        android:layout_above="@+id/info_button"
+        android:layout_alignStart="@+id/contact_button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
 
     <Button android:layout_width="95dp" android:layout_height="95dp" android:text="Info"
-        android:id="@+id/edit_button" android:background="@drawable/abc_ab_bottom_solid_dark_holo"
+        android:id="@+id/info_button" android:background="@drawable/abc_ab_bottom_solid_dark_holo"
         android:textColor="#fff9fe"
         android:layout_x="226dp" android:layout_y="239dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/contact_button"
 
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_centerVertical="true"
-        android:layout_alignEnd="@+id/SMSList"
-        android:layout_marginEnd="50dp" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+        
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iconView"
+        android:src="@drawable/icon"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/contact_button"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
