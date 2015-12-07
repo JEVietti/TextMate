@@ -62,7 +62,7 @@ public class textMateData {
     public double fetchAvgWordCount(){return this.newAvgWordCount;}
 
     //Calculates the Average amount of words per message for each contact in the SMS table
-    public double setAvgWordCount(){
+    private double setAvgWordCount(){
         double ans;
         ans = this.wordCount/this.msgCount;
         return ans;
@@ -72,7 +72,7 @@ public class textMateData {
     public double fetchDiffTimeRSent(){return this.newAvgTimeSent;}
 
     //Calculates and Sets the Average Difference in time between Sent Messages of a Single Contact
-    public double setDiffTimeSent() {
+    private double setDiffTimeSent() {
         double temp=0.0,ans = 0.0;
         if(list2.size()==0){return ans;}
         else if(list2.size()==1){return this.list2.get(0)/60;}
@@ -92,7 +92,7 @@ public class textMateData {
     public double fetchDiffTimeReceive(){return this.newAvgTimeRec;}
 
     //Calculates and sets the Average Difference in time bewtween Received Messages of a Single Contact
-    public double setDiffTimeReceive() {
+    private double setDiffTimeReceive() {
         double temp = 0.0, ans = 0.0;
         if (list2.size() == 0) {
             return ans;

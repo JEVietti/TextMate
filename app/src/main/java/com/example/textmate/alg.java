@@ -1,30 +1,26 @@
 
-/* This is an outline of the Algorithm class I think we will need
-* As it stands it is very generic and doesn't have pointers in the class
-*  variables or parameters of the functions due to not knowing how the data
-*  is going to be retrieved from the SMS messenger database*/
-
 package com.example.textmate;
 
 //Unsure all the imports we will need to retrieve and manipulate data
 // add more imports to the list if you know what we will be needing
 import android.util.Log;
 
-import java.lang.Class;
 import java.lang.String;
 import java.lang.Math;
 import java.text.DecimalFormat;
-
-import com.example.textmate.MainActivity;
 import com.example.textmate.sqlitehelper.DatabaseHelper;
 //This will serve as the bare bones for creating the algorithm
 //from the data stored in the SMS database on the phone inherently
 
 
-//(This is just an idea feel free to edit it as you wish)
-// The algorithm weights will be as follows: the delta time of texts received and sent
-// will have a weight of 2x -> x being number of texts between a day
-// Weight of #of characters =>
+/* The algorithm is based on the idea of the lim as x->infinity 1/x = 0
+* The metadata we are using is the amount of words, message count,words per message, and the
+ * average change in time between the received and sent messages.
+* So to reward a greater amount of words and messages and a smaller amount of time between said messages
+* The average change in time needs to be the numerator and the other data be the denominator otherwise the user
+* is rewarded for having a greater change in time instead of a smaller amount
+* As the goal is to have the closest possible score to zero is a good relationship
+* */
 public class alg{
 
     //Constructor I'm thinking we need need this as a way to grab data
@@ -71,42 +67,34 @@ public class alg{
 // For the function valNumTxt -> the value assigned based on the # of texts and messages
     private int valSizeNumTxt(int MC,int WC){return MC+WC; }
 
-    /*For the function valSizeTxt -> the value assigned based on
-     * the Average size of the texts
-     * based on the amount of characters over a certain time period i.e. 24 hour
-     * The weight = ((#word total for all texts during day/ # of texts that day)/ time)*/
-    //Value for the average size of texts in a day
+    //Value for the average size of texts in a day divided by the words per message
     private double valTimeTxtWPM(double TS,double TR,double WPM){
         double TSR = Math.abs(TS-TR);
         return (TSR/WPM);
     }
 
-    /* For the Function valTimeTxt -> the value assigned based on
-    * the Average time between messages throughout the day,
-    * between the messages received from a certain contact, time between messages
-    * sent to the contact and the time between a message sent and received
-    * from the contact all will be combined into a single value
-    * */
-    //Value for the time for both received and sent messages
+
+    //Value for the time for both received and sent messages and the difference between times
+    // divided by the number of total messages between the contact
     private double valTimeTxtCount(double tS,double tR,int numMessage) {
         double ans, tSR;
 
         tSR = Math.abs(tS - tR);
         ans = (tS + tR); //Temp = Avg timeSent + 2*timeRec
-        ans = ((ans - tSR)/60);       //Temp = Temp - Avg
+        ans = (ans - tSR);       //Temp = Temp - Avg
         return ans /numMessage;
     }
-
+    //creates a score based on the amount of total words compared to the difference between
+    //the average time between messages sent and received
     private double valTimeTxtSize(double tS,double tR,int wordCount){
         double ans, tSR;
         tSR = Math.abs(tS - tR);
-        ans=tSR/60;
-        ans = ans/wordCount;
+        ans = tSR/wordCount;
         return ans;
     }
 
     /* The function weighValues is used to combine the values of the previously
-    * defined functions: valNumTxt, valSizeTxt, and valTime
+    * defined functions: valNumSize, valTimeTxtSize,valTimeTxtCount, valTimeTxtWPM
     *  => into a single value score which will be stored into a variable valToday
     *  */
     //Combined value for the functions above
